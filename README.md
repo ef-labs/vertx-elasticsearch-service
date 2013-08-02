@@ -15,7 +15,7 @@ The configuration options are as follows:
 ```
 
 * `address` - The event bus address to listen on.  The default is `"et.vertx.elasticsearch"`.
-* `transportAddress` - An array of transport address objects containing `hostname` and `port`.  If no transport address are provided the default is `"localhost"` and `9300`
+* `transportAddresses` - An array of transport address objects containing `hostname` and `port`.  If no transport address are provided the default is `"localhost"` and `9300`
     * `hostname` - the ip or hostname of the node to connect to.
     * `port` - the port of the node to connect to.  The default is `9300`.
 * `cluster_name` - the elastic search cluster name.  The default is `"elasticsearch"`.
