@@ -26,7 +26,7 @@ An example configuration would be:
 ```json
 {
     "address": "eb.elasticsearch",
-    "transportAddress": [ { "hostname": "host1", "port": 9300 }, { "hostname": "host2", "port": 9301 } ],
+    "transportAddresses": [ { "hostname": "host1", "port": 9300 }, { "hostname": "host2", "port": 9301 } ],
     "cluster_name": "my_cluster",
     "client_transport_sniff": true
 }
