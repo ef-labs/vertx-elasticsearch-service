@@ -5,4 +5,5 @@
     "licenses": ["The MIT License"],
     "author": "Englishtown",
     "keywords": ["ElasticSearch", "elasticsearch", "elastic search", "Lucene", "lucene", "search"],
-    "homepage": "https://github.com/englishtown/vertx-mod-elasticsearch"}
+    "homepage": "https://github.com/englishtown/vertx-mod-elasticsearch"
+}

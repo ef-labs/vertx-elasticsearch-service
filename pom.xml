@@ -17,6 +17,7 @@
     <properties>
         <es.version>0.90.2</es.version>
         <hk2.version>1.0.0-final</hk2.version>
+        <when.version>1.0.0-SNAPSHOT</when.version>
     </properties>
 
     <dependencies>
@@ -30,6 +31,13 @@
             <artifactId>vertx-mod-hk2</artifactId>
             <version>${hk2.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.englishtown</groupId>
+            <artifactId>vertx-mod-when</artifactId>
+            <version>${when.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
