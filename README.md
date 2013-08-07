@@ -8,7 +8,7 @@ The configuration options are as follows:
 ```json
 {
     "address": <address>,
-    "transportAddresses": [ { "hostname": <hostname>, "port": <port> } ]
+    "transportAddresses": [ { "hostname": <hostname>, "port": <port> } ],
     "cluster_name": <cluster_name>,
     "client_transport_sniff": <client_transport_sniff>
 }
