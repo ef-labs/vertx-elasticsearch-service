@@ -1,6 +1,6 @@
 {
     "main": "com.englishtown.vertx.elasticsearch.ElasticSearch",
-    "includes": "com.englishtown~vertx-mod-hk2~1.0.0-final",
+    "includes": "com.englishtown~vertx-mod-hk2~1.4.0-final",
     "description": "ElasticSearch over the vert.x event bus",
     "licenses": ["The MIT License"],
     "author": "Englishtown",
