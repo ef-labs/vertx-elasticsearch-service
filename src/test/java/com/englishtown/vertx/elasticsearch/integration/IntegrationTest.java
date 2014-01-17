@@ -25,7 +25,6 @@ import static org.vertx.testtools.VertxAssert.*;
 /**
  * {@link ElasticSearch} integration test
  */
-@RunWith(CPJavaClassRunner.class)
 public class IntegrationTest extends TestVerticle {
 
     private String id = "integration-test-1";

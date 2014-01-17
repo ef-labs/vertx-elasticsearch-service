@@ -273,7 +273,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         // Set the filter
         JsonObject filter = body.getObject("filter");
         if (filter != null) {
-            builder.setFilter(filter.encode());
+            builder.setPostFilter(filter.encode());
         }
 
         // Set facets
