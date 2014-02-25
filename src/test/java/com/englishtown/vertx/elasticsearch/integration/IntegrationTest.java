@@ -1,14 +1,10 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.promises.Promise;
-import com.englishtown.promises.Runnable;
-import com.englishtown.promises.Value;
-import com.englishtown.promises.When;
+import com.englishtown.promises.*;
 import com.englishtown.vertx.elasticsearch.ElasticSearch;
 import com.englishtown.vertx.promises.WhenEventBus;
 import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Future;
 import org.vertx.java.core.Handler;
@@ -67,8 +63,8 @@ public class IntegrationTest extends TestVerticle {
 
         int count = 100;
         WhenEventBus eventBus = new DefaultWhenEventBus(vertx, container);
-        When<Message<JsonObject>, Void> when = new When<>();
-        List<Promise<Message<JsonObject>, Void>> promises = new ArrayList<>();
+        When<Message<JsonObject>> when = new When<>();
+        List<Promise<Message<JsonObject>>> promises = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
             JsonObject message = new JsonObject()
@@ -83,10 +79,10 @@ public class IntegrationTest extends TestVerticle {
             promises.add(eventBus.<JsonObject>send(ElasticSearch.DEFAULT_ADDRESS, message));
         }
 
-        when.all(promises,
-                new Runnable<Promise<List<Message<JsonObject>>, Void>, List<Message<JsonObject>>>() {
+        when.all(promises).then(
+                new FulfilledRunnable<List<? extends Message<JsonObject>>>() {
                     @Override
-                    public Promise<List<Message<JsonObject>>, Void> run(List<Message<JsonObject>> replies) {
+                    public Promise<List<? extends Message<JsonObject>>> run(List<? extends Message<JsonObject>> replies) {
                         assertEquals(100, replies.size());
                         for (Message<JsonObject> reply : replies) {
                             assertEquals("ok", reply.body().getString("status"));
@@ -95,9 +91,9 @@ public class IntegrationTest extends TestVerticle {
                         return null;
                     }
                 },
-                new Runnable<Promise<List<Message<JsonObject>>, Void>, Value<List<Message<JsonObject>>>>() {
+                new RejectedRunnable<List<? extends Message<JsonObject>>>() {
                     @Override
-                    public Promise<List<Message<JsonObject>>, Void> run(Value<List<Message<JsonObject>>> value) {
+                    public Promise<List<? extends Message<JsonObject>>> run(Value<List<? extends Message<JsonObject>>> value) {
                         fail();
                         testComplete();
                         return null;
