@@ -8,7 +8,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -30,12 +30,10 @@ import java.util.List;
 public class ElasticSearch extends BusModBase implements Handler<Message<JsonObject>> {
 
     protected final TransportClientFactory clientFactory;
+    private final ElasticSearchConfigurator configurator;
     protected TransportClient client;
     protected String address;
 
-    public static final String CONFIG_TRANSPORT_ADDRESSES = "transportAddresses";
-    public static final String CONFIG_HOSTNAME = "hostname";
-    public static final String CONFIG_PORT = "port";
     public static final String CONFIG_ADDRESS = "address";
     public static final String DEFAULT_ADDRESS = "et.vertx.elasticsearch";
     public static final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
@@ -48,11 +46,12 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     public static final String CONST_SOURCE = "_source";
 
     @Inject
-    public ElasticSearch(TransportClientFactory clientFactory) {
+    public ElasticSearch(TransportClientFactory clientFactory, ElasticSearchConfigurator configurator) {
         if (clientFactory == null) {
             throw new IllegalArgumentException("clientProvider is null");
         }
         this.clientFactory = clientFactory;
+        this.configurator = configurator;
     }
 
     /**
@@ -63,28 +62,14 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         super.start();
 
         Settings settings = ImmutableSettings.settingsBuilder()
-                .put("cluster.name", config.getString("cluster_name", "elasticsearch"))
-                .put("client.transport.sniff", config.getBoolean("client_transport_sniff", true))
+                .put("cluster.name", configurator.getClusterName())
+                .put("client.transport.sniff", configurator.getClientTransportSniff())
                 .build();
 
         client = clientFactory.create(settings);
 
-        JsonArray transportAddresses = config.getArray(CONFIG_TRANSPORT_ADDRESSES);
-        if (transportAddresses != null) {
-            for (int i = 0; i < transportAddresses.size(); i++) {
-                JsonObject transportAddress = transportAddresses.get(i);
-                String hostname = transportAddress.getString(CONFIG_HOSTNAME);
-
-                if (hostname != null && !hostname.isEmpty()) {
-                    int port = transportAddress.getInteger(CONFIG_PORT, 9300);
-                    client.addTransportAddress(new InetSocketTransportAddress(hostname, port));
-                }
-            }
-        }
-
-        // If no addresses are configured, add local host on the default port
-        if (client.transportAddresses().size() == 0) {
-            client.addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+        for (TransportAddress transportAddress : configurator.getTransportAddresses()) {
+            client.addTransportAddress(transportAddress);
         }
 
         address = config.getString(CONFIG_ADDRESS, DEFAULT_ADDRESS);
