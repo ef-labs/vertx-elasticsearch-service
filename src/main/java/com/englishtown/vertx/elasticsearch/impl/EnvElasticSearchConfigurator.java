@@ -43,7 +43,7 @@ public class EnvElasticSearchConfigurator extends JsonElasticSearchConfigurator 
         String val = System.getenv(ENV_VAR_TRANSPORT_ADDRESSES);
 
         if (val != null) {
-            String[] addresses = val.split("|");
+            String[] addresses = val.split("\\|");
             for (String address : addresses) {
                 String[] split = address.split(":");
 

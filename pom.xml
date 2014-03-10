@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <es.version>1.0.0</es.version>
+        <es.version>1.0.1</es.version>
         <hk2.version>1.6.0-SNAPSHOT</hk2.version>
         <when.version>2.0.0-SNAPSHOT</when.version>
     </properties>
