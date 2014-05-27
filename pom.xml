@@ -10,13 +10,13 @@
     <parent>
         <groupId>com.englishtown</groupId>
         <artifactId>oss-parent-vertx</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.0</version>
     </parent>
 
     <properties>
         <es.version>1.0.1</es.version>
-        <hk2.version>1.6.0-SNAPSHOT</hk2.version>
-        <when.version>2.0.0-SNAPSHOT</when.version>
+        <hk2.version>1.6.0</hk2.version>
+        <when.version>2.0.0</when.version>
     </properties>
 
     <dependencies>
