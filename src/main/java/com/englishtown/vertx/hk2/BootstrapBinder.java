@@ -1,7 +1,5 @@
 package com.englishtown.vertx.hk2;
 
-import com.englishtown.vertx.elasticsearch.TransportClientFactory;
-import com.englishtown.vertx.elasticsearch.impl.DefaultTransportClientFactory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 /**
@@ -15,9 +13,7 @@ public class BootstrapBinder extends AbstractBinder {
      */
     @Override
     protected void configure() {
-
-        bind(DefaultTransportClientFactory.class).to(TransportClientFactory.class);
-
+        install(new ElasticSearchBinder());
     }
 
 }
