@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>vertx-mod-elasticsearch</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <parent>
         <groupId>com.englishtown</groupId>
@@ -12,8 +12,8 @@
     </parent>
 
     <properties>
-        <es.version>1.0.1</es.version>
-        <hk2.version>1.6.0</hk2.version>
+        <es.version>1.2.0</es.version>
+        <hk2.version>1.6.1</hk2.version>
         <when.version>2.0.0</when.version>
     </properties>
 

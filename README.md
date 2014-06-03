@@ -41,8 +41,8 @@ The `ElasticSearch` verticle requires a `TransportClientFactory` to be injected.
 
 There are two ways to enable DI:
 
-1. In the vert.x langs.properties set the java value to:  java=com.englishtown~vertx-mod-hk2~1.6.0:com.englishtown.vertx.hk2.HK2VerticleFactory
-2. Pass a system property at startup like this: -Dvertx.langs.java=com.englishtown~vertx-mod-hk2~1.6.0:com.englishtown.vertx.hk2.HK2VerticleFactory
+1. In the vert.x langs.properties set the java value to:  java=com.englishtown~vertx-mod-hk2~1.6.1:com.englishtown.vertx.hk2.HK2VerticleFactory
+2. Pass a system property at startup like this: -Dvertx.langs.java=com.englishtown~vertx-mod-hk2~1.6.1:com.englishtown.vertx.hk2.HK2VerticleFactory
 
 See the [englishtown/vertx-mod-hk2](https://github.com/englishtown/vertx-mod-hk2) project for more details.
 

@@ -1,5 +1,6 @@
 {
     "main": "com.englishtown.vertx.elasticsearch.ElasticSearch",
+    "resident": true,
     "description": "ElasticSearch over the vert.x event bus",
     "licenses": ["The MIT License"],
     "author": "Englishtown",

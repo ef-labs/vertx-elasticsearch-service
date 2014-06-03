@@ -77,6 +77,15 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop() {
+        client.close();
+        client = null;
+    }
+
+    /**
      * Handle an incoming elastic search message
      */
     @Override
@@ -126,10 +135,8 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
             return;
         }
 
-        String type = getRequiredType(body, message);
-        if (type == null) {
-            return;
-        }
+        // type is optional
+        String type = body.getString(CONST_TYPE);;
 
         JsonObject source = body.getObject(CONST_SOURCE);
         if (source == null) {
@@ -175,10 +182,8 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
             return;
         }
 
-        String type = getRequiredType(body, message);
-        if (type == null) {
-            return;
-        }
+        // type is optional
+        String type = body.getString(CONST_TYPE);;
 
         String id = body.getString(CONST_ID);
         if (id == null) {
@@ -336,15 +341,6 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
             return null;
         }
         return index;
-    }
-
-    protected String getRequiredType(JsonObject json, Message<JsonObject> message) {
-        String type = json.getString(CONST_TYPE);
-        if (type == null || type.isEmpty()) {
-            sendError(message, CONST_TYPE + " is required");
-            return null;
-        }
-        return type;
     }
 
     protected void handleActionResponse(ToXContent toXContent, Message<JsonObject> message) {
