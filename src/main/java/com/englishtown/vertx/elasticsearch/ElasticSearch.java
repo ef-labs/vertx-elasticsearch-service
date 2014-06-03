@@ -77,6 +77,15 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop() {
+        client.close();
+        client = null;
+    }
+
+    /**
      * Handle an incoming elastic search message
      */
     @Override
