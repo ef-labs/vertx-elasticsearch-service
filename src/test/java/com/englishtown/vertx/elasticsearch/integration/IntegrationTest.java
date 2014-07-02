@@ -38,8 +38,8 @@ public class IntegrationTest extends TestVerticle {
                 .putString(ElasticSearch.CONST_TYPE, type)
                 .putString(ElasticSearch.CONST_ID, id)
                 .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                        .putString("user", source_user)
-                        .putString("message", source_message)
+                                .putString("user", source_user)
+                                .putString("message", source_message)
                 );
 
         vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
@@ -73,8 +73,8 @@ public class IntegrationTest extends TestVerticle {
                     .putString(ElasticSearch.CONST_TYPE, type)
                     .putString(ElasticSearch.CONST_ID, id + i)
                     .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                            .putString("user", source_user)
-                            .putString("message", source_message + " " + i)
+                                    .putString("user", source_user)
+                                    .putString("message", source_message + " " + i)
                     );
             promises.add(eventBus.<JsonObject>send(ElasticSearch.DEFAULT_ADDRESS, message));
         }
@@ -138,6 +138,11 @@ public class IntegrationTest extends TestVerticle {
 
         JsonObject message = new JsonObject()
                 .putString("action", "search")
+                .putNumber("timeout", 100)
+                .putNumber("size", 10)
+                .putArray("fields", new JsonArray()
+                        .addString("user")
+                        .addString("message"))
                 .putString(ElasticSearch.CONST_INDEX, index)
                 .putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
 

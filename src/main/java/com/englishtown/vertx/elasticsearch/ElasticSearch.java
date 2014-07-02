@@ -9,6 +9,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -194,13 +196,13 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         client.prepareGet(index, type, id)
                 .execute(new ActionListener<GetResponse>() {
                     @Override
-                    public void onResponse(GetResponse getFields) {
-                        JsonObject source = (getFields.isExists() ? new JsonObject(getFields.getSourceAsString()) : null);
+                    public void onResponse(GetResponse getResponse) {
+                        JsonObject source = (getResponse.isExists() ? new JsonObject(getResponse.getSourceAsString()) : null);
                         JsonObject reply = new JsonObject()
-                                .putString(CONST_INDEX, getFields.getIndex())
-                                .putString(CONST_TYPE, getFields.getType())
-                                .putString(CONST_ID, getFields.getId())
-                                .putNumber(CONST_VERSION, getFields.getVersion())
+                                .putString(CONST_INDEX, getResponse.getIndex())
+                                .putString(CONST_TYPE, getResponse.getType())
+                                .putString(CONST_ID, getResponse.getId())
+                                .putNumber(CONST_VERSION, getResponse.getVersion())
                                 .putObject(CONST_SOURCE, source);
                         sendOK(message, reply);
                     }
@@ -282,6 +284,26 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         String scroll = body.getString("scroll");
         if (scroll != null) {
             builder.setScroll(scroll);
+        }
+
+        // Set Size
+        Integer size = body.getInteger("size");
+        if (size != null) {
+            builder.setSize(size);
+        }
+
+        //Set requested fields
+        JsonArray fields = body.getArray("fields");
+        if (fields != null) {
+            for (int i = 0; i < fields.size(); i++) {
+                builder.addField(fields.<String>get(i));
+            }
+        }
+
+        //Set query timeout
+        Long queryTimeout = body.getLong("timeout");
+        if (queryTimeout != null) {
+            builder.setTimeout(new TimeValue(queryTimeout));
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
