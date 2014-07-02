@@ -9,6 +9,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -22,6 +23,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -282,6 +284,28 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         String scroll = body.getString("scroll");
         if (scroll != null) {
             builder.setScroll(scroll);
+        }
+
+        // Set Size
+        Number size = body.getNumber("size");
+        if (size != null) {
+            builder.setSize(size.intValue());
+        }
+
+        //Set requested fields
+        JsonArray fields = body.getArray("fields");
+        if (fields != null) {
+            Iterator<Object> fieldIterator = fields.iterator();
+            while (fieldIterator.hasNext()) {
+                String field = (String)fieldIterator.next();
+                builder.addField(field);
+            }
+        }
+
+        //Set query timeout
+        Number queryTimeout = body.getNumber("timeout");
+        if (queryTimeout != null) {
+            builder.setTimeout(new TimeValue(queryTimeout.longValue()));
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
