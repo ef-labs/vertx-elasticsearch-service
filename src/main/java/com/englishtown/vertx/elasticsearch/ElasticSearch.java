@@ -196,13 +196,13 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         client.prepareGet(index, type, id)
                 .execute(new ActionListener<GetResponse>() {
                     @Override
-                    public void onResponse(GetResponse getFields) {
-                        JsonObject source = (getFields.isExists() ? new JsonObject(getFields.getSourceAsString()) : null);
+                    public void onResponse(GetResponse getResponse) {
+                        JsonObject source = (getResponse.isExists() ? new JsonObject(getResponse.getSourceAsString()) : null);
                         JsonObject reply = new JsonObject()
-                                .putString(CONST_INDEX, getFields.getIndex())
-                                .putString(CONST_TYPE, getFields.getType())
-                                .putString(CONST_ID, getFields.getId())
-                                .putNumber(CONST_VERSION, getFields.getVersion())
+                                .putString(CONST_INDEX, getResponse.getIndex())
+                                .putString(CONST_TYPE, getResponse.getType())
+                                .putString(CONST_ID, getResponse.getId())
+                                .putNumber(CONST_VERSION, getResponse.getVersion())
                                 .putObject(CONST_SOURCE, source);
                         sendOK(message, reply);
                     }
@@ -287,25 +287,23 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         }
 
         // Set Size
-        Number size = body.getNumber("size");
+        Integer size = body.getInteger("size");
         if (size != null) {
-            builder.setSize(size.intValue());
+            builder.setSize(size);
         }
 
         //Set requested fields
         JsonArray fields = body.getArray("fields");
         if (fields != null) {
-            Iterator<Object> fieldIterator = fields.iterator();
-            while (fieldIterator.hasNext()) {
-                String field = (String)fieldIterator.next();
-                builder.addField(field);
+            for (int i = 0; i < fields.size(); i++) {
+                builder.addField(fields.<String>get(i));
             }
         }
 
         //Set query timeout
-        Number queryTimeout = body.getNumber("timeout");
+        Long queryTimeout = body.getLong("timeout");
         if (queryTimeout != null) {
-            builder.setTimeout(new TimeValue(queryTimeout.longValue()));
+            builder.setTimeout(new TimeValue(queryTimeout));
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
