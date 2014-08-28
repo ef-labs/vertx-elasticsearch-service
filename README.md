@@ -204,6 +204,7 @@ Send a json message to the event bus with the following structure:
     "search_type": <search_type>,
     "scroll": <scroll>,
     "size": <size>,
+    "from": <from>,
     "fields": <fields>,
     "timeout": <timeout>
 }
@@ -225,6 +226,7 @@ Send a json message to the event bus with the following structure:
     * scan - use this to scroll a large result set
 * `scroll` - a string time value parameter (ex. `"5m"` or `"30s"`).  This is only required when search_type is `scan`.
 * `size` - a number representing the max number of results to be returned. The default if not specified is 10. (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-from-size.html). This is optional.
+* `from` - a number representing the offset from the first result to be returned. The default if not specified is 0. (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-from-size.html). This is optional.
 * `fields` - an array of strings representing the fields to return. Else the entire document is returned. (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html). This is optional.
 * `timeout` - a number representing the timeout in milliseconds that should be given to elasticsearch to perform a command. This is optional.
 

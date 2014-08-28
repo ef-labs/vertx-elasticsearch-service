@@ -1,9 +1,14 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.promises.*;
-import com.englishtown.vertx.elasticsearch.ElasticSearch;
-import com.englishtown.vertx.promises.WhenEventBus;
-import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import static org.vertx.testtools.VertxAssert.assertEquals;
+import static org.vertx.testtools.VertxAssert.assertNotNull;
+import static org.vertx.testtools.VertxAssert.assertTrue;
+import static org.vertx.testtools.VertxAssert.fail;
+import static org.vertx.testtools.VertxAssert.testComplete;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Future;
@@ -13,10 +18,14 @@ import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.vertx.testtools.VertxAssert.*;
+import com.englishtown.promises.FulfilledRunnable;
+import com.englishtown.promises.Promise;
+import com.englishtown.promises.RejectedRunnable;
+import com.englishtown.promises.Value;
+import com.englishtown.promises.When;
+import com.englishtown.vertx.elasticsearch.ElasticSearch;
+import com.englishtown.vertx.promises.WhenEventBus;
+import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
 
 /**
  * {@link ElasticSearch} integration test
@@ -140,6 +149,7 @@ public class IntegrationTest extends TestVerticle {
                 .putString("action", "search")
                 .putNumber("timeout", 100)
                 .putNumber("size", 10)
+                .putNumber("from", 10)
                 .putArray("fields", new JsonArray()
                         .addString("user")
                         .addString("message"))
