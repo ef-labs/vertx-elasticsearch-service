@@ -1,15 +1,12 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import static org.vertx.testtools.VertxAssert.assertEquals;
-import static org.vertx.testtools.VertxAssert.assertNotNull;
-import static org.vertx.testtools.VertxAssert.assertTrue;
-import static org.vertx.testtools.VertxAssert.fail;
-import static org.vertx.testtools.VertxAssert.testComplete;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.englishtown.promises.*;
+import com.englishtown.vertx.elasticsearch.ElasticSearch;
+import com.englishtown.vertx.promises.WhenEventBus;
+import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.Future;
 import org.vertx.java.core.Handler;
@@ -18,18 +15,15 @@ import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.testtools.TestVerticle;
 
-import com.englishtown.promises.FulfilledRunnable;
-import com.englishtown.promises.Promise;
-import com.englishtown.promises.RejectedRunnable;
-import com.englishtown.promises.Value;
-import com.englishtown.promises.When;
-import com.englishtown.vertx.elasticsearch.ElasticSearch;
-import com.englishtown.vertx.promises.WhenEventBus;
-import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.vertx.testtools.VertxAssert.*;
 
 /**
  * {@link ElasticSearch} integration test
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IntegrationTest extends TestVerticle {
 
     private String id = "integration-test-1";
@@ -39,7 +33,7 @@ public class IntegrationTest extends TestVerticle {
     private String source_message = "vertx elastic search";
 
     @Test
-    public void testIndex() throws Exception {
+    public void test1Index() throws Exception {
 
         JsonObject message = new JsonObject()
                 .putString("action", "index")
@@ -68,7 +62,7 @@ public class IntegrationTest extends TestVerticle {
 
 
     @Test
-    public void testIndex_Multiple() throws Exception {
+    public void test2Index_Multiple() throws Exception {
 
         int count = 100;
         WhenEventBus eventBus = new DefaultWhenEventBus(vertx, container);
@@ -113,7 +107,7 @@ public class IntegrationTest extends TestVerticle {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void test3Get() throws Exception {
 
         JsonObject message = new JsonObject()
                 .putString("action", "get")
@@ -143,7 +137,7 @@ public class IntegrationTest extends TestVerticle {
     }
 
     @Test
-    public void testSearch_Simple() throws Exception {
+    public void test4Search_Simple() throws Exception {
 
         JsonObject message = new JsonObject()
                 .putString("action", "search")
@@ -167,7 +161,7 @@ public class IntegrationTest extends TestVerticle {
     }
 
     @Test
-    public void testScroll() throws Exception {
+    public void test5Scroll() throws Exception {
 
         JsonObject message = new JsonObject()
                 .putString("action", "search")
@@ -200,6 +194,30 @@ public class IntegrationTest extends TestVerticle {
                         testComplete();
                     }
                 });
+            }
+        });
+
+    }
+
+    @Test
+    public void test6Delete() throws Exception {
+
+        JsonObject message = new JsonObject()
+                .putString("action", "delete")
+                .putString(ElasticSearch.CONST_INDEX, index)
+                .putString(ElasticSearch.CONST_TYPE, type)
+                .putString(ElasticSearch.CONST_ID, id);
+
+        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
+            @Override
+            public void handle(Message<JsonObject> reply) {
+                JsonObject body = reply.body();
+                assertEquals("ok", body.getString("status"));
+                assertEquals(index, body.getString(ElasticSearch.CONST_INDEX));
+                assertEquals(type, body.getString(ElasticSearch.CONST_TYPE));
+                assertEquals(id, body.getString(ElasticSearch.CONST_ID));
+                assertTrue(body.getInteger(ElasticSearch.CONST_VERSION, 0) > 0);
+                testComplete();
             }
         });
 
