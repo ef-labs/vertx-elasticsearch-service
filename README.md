@@ -39,10 +39,10 @@ NOTE: No configuration is needed if running elastic search locally with the defa
 
 The `ElasticSearch` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create a guice module if that is your container of choice.
 
-There are two ways to enable DI:
+There are two ways to enable DI (adapt HK2 version if different):
 
-1. In the vert.x langs.properties set the java value to:  java=com.englishtown~vertx-mod-hk2~1.6.1:com.englishtown.vertx.hk2.HK2VerticleFactory
-2. Pass a system property at startup like this: -Dvertx.langs.java=com.englishtown~vertx-mod-hk2~1.6.1:com.englishtown.vertx.hk2.HK2VerticleFactory
+1. In the vert.x langs.properties set the java value to:  java=com.englishtown~vertx-mod-hk2~1.7.0:com.englishtown.vertx.hk2.HK2VerticleFactory
+2. Pass a system property at startup like this: -Dvertx.langs.java=com.englishtown~vertx-mod-hk2~1.7.0:com.englishtown.vertx.hk2.HK2VerticleFactory
 
 See the [englishtown/vertx-mod-hk2](https://github.com/englishtown/vertx-mod-hk2) project for more details.
 
@@ -114,6 +114,7 @@ An example reply message would be:
     "_version": 1
 }
 ```
+NOTE: A missing document will always be created (`upsert` mode) because the `op_type` parameter is not implemented yet (http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-index_.html).
 
 
 ### Get
@@ -359,5 +360,65 @@ An example reply message for the scroll above would be:
             }
         ]
     }
+}
+```
+
+### Delete
+
+http://www.elasticsearch.org/guide/reference/api/delete/
+
+Send a json message to the event bus with the following structure:
+
+```json
+{
+    "action": "delete",
+    "_index": <index>,
+    "_type": <type>,
+    "_id": <id>
+}
+```
+
+* `index` - the index name.
+* `type` - the type name.
+* `id` - the string id of the document to delete.
+
+An example message would be:
+
+```json
+{
+    "action": "delete",
+    "_index": "twitter",
+    "_type": "tweet",
+    "_id": "1"
+}
+```
+
+The event bus replies with a json message with the following structure:
+
+```json
+{
+    "found": <status>,
+    "_index": <index>,
+    "_type": <type>,
+    "_id": <id>,
+    "_version": <version>
+}
+```
+
+* `found` - either `true` or `false`
+* `index` - the index name.
+* `type` - the type name.
+* `id` - the string id of the source to delete.
+* `version` - the numeric version of the deleted document starting at 1.
+
+An example message would be:
+
+```json
+{
+    "found": "true",
+    "_index": "twitter",
+    "_type": "tweet",
+    "_id": "1",
+    "_version": 1
 }
 ```
