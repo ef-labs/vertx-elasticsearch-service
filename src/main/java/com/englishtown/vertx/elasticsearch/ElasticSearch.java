@@ -129,7 +129,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * See http://www.elasticsearch.org/guide/reference/api/index_/
      *
-     * @param message
+     * @param message index event bus message
      */
     public void doIndex(final Message<JsonObject> message) {
 
@@ -176,7 +176,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * http://www.elasticsearch.org/guide/reference/java-api/get/
      *
-     * @param message
+     * @param message get event bus message
      */
     public void doGet(final Message<JsonObject> message) {
 
@@ -221,7 +221,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
      * http://www.elasticsearch.org/guide/reference/api/search/
      * http://www.elasticsearch.org/guide/reference/query-dsl/
      *
-     * @param message
+     * @param message search event bus message
      */
     public void doSearch(final Message<JsonObject> message) {
 
@@ -331,7 +331,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * http://www.elasticsearch.org/guide/reference/api/search/scroll/
      *
-     * @param message
+     * @param message scroll event bus message
      */
     public void doScroll(final Message<JsonObject> message) {
 
@@ -367,7 +367,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * http://www.elasticsearch.org/guide/reference/java-api/delete/
      *
-     * @param message
+     * @param message delete event bus message
      */
     public void doDelete(final Message<JsonObject> message) {
 

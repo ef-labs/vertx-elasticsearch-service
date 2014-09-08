@@ -12,7 +12,7 @@ public class DefaultTransportClientFactory implements TransportClientFactory {
      * Create a client from the settings
      *
      * @param settings the settings used to create the client
-     * @return
+     * @return transport client
      */
     @Override
     public TransportClient create(Settings settings) {
