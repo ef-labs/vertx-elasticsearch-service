@@ -1,6 +1,7 @@
 package com.englishtown.vertx.elasticsearch;
 
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -23,7 +24,6 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -112,6 +112,9 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
                 case "scroll":
                     doScroll(message);
                     break;
+                case "delete":
+                    doDelete(message);
+                    break;
                 default:
                     sendError(message, "Unrecognized action " + action);
                     break;
@@ -126,7 +129,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * See http://www.elasticsearch.org/guide/reference/api/index_/
      *
-     * @param message
+     * @param message index event bus message
      */
     public void doIndex(final Message<JsonObject> message) {
 
@@ -138,7 +141,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         }
 
         // type is optional
-        String type = body.getString(CONST_TYPE);;
+        String type = body.getString(CONST_TYPE);
 
         JsonObject source = body.getObject(CONST_SOURCE);
         if (source == null) {
@@ -173,7 +176,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * http://www.elasticsearch.org/guide/reference/java-api/get/
      *
-     * @param message
+     * @param message get event bus message
      */
     public void doGet(final Message<JsonObject> message) {
 
@@ -185,11 +188,10 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
         }
 
         // type is optional
-        String type = body.getString(CONST_TYPE);;
+        String type = body.getString(CONST_TYPE);
 
-        String id = body.getString(CONST_ID);
+        String id = getRequiredId(body, message);
         if (id == null) {
-            sendError(message, CONST_ID + " is required");
             return;
         }
 
@@ -219,7 +221,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
      * http://www.elasticsearch.org/guide/reference/api/search/
      * http://www.elasticsearch.org/guide/reference/query-dsl/
      *
-     * @param message
+     * @param message search event bus message
      */
     public void doSearch(final Message<JsonObject> message) {
 
@@ -292,6 +294,12 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
             builder.setSize(size);
         }
 
+        // Set From
+        Integer from = body.getInteger("from");
+        if (from != null) {
+            builder.setFrom(from);
+        }
+
         //Set requested fields
         JsonArray fields = body.getArray("fields");
         if (fields != null) {
@@ -323,7 +331,7 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
     /**
      * http://www.elasticsearch.org/guide/reference/api/search/scroll/
      *
-     * @param message
+     * @param message scroll event bus message
      */
     public void doScroll(final Message<JsonObject> message) {
 
@@ -356,6 +364,49 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
 
     }
 
+    /**
+     * http://www.elasticsearch.org/guide/reference/java-api/delete/
+     *
+     * @param message delete event bus message
+     */
+    public void doDelete(final Message<JsonObject> message) {
+
+        JsonObject body = message.body();
+
+        final String index = getRequiredIndex(body, message);
+        if (index == null) {
+            return;
+        }
+
+        final String type = getRequiredType(body, message);
+        if (type == null) {
+            return;
+        }
+        final String id = getRequiredId(body, message);
+        if (id == null) {
+            return;
+        }
+
+        client.prepareDelete(index, type, id)
+                .execute(new ActionListener<DeleteResponse>() {
+                    @Override
+                    public void onResponse(DeleteResponse deleteResponse) {
+                        JsonObject reply = new JsonObject()
+                                .putString(CONST_INDEX, deleteResponse.getIndex())
+                                .putString(CONST_TYPE, deleteResponse.getType())
+                                .putString(CONST_ID, deleteResponse.getId())
+                                .putNumber(CONST_VERSION, deleteResponse.getVersion());
+                        sendOK(message, reply);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable e) {
+                        sendError(message, "Get error: " + e.getMessage(), new RuntimeException(e));
+                    }
+                });
+
+    }
+
     protected String getRequiredIndex(JsonObject json, Message<JsonObject> message) {
         String index = json.getString(CONST_INDEX);
         if (index == null || index.isEmpty()) {
@@ -363,6 +414,24 @@ public class ElasticSearch extends BusModBase implements Handler<Message<JsonObj
             return null;
         }
         return index;
+    }
+
+    protected String getRequiredType(JsonObject json, Message<JsonObject> message) {
+        String type = json.getString(CONST_TYPE);
+        if (type == null || type.isEmpty()) {
+            sendError(message, CONST_TYPE + " is required");
+            return null;
+        }
+        return type;
+    }
+
+    protected String getRequiredId(JsonObject json, Message<JsonObject> message) {
+        String id = json.getString(CONST_ID);
+        if (id == null || id.isEmpty()) {
+            sendError(message, CONST_ID + " is required");
+            return null;
+        }
+        return id;
     }
 
     protected void handleActionResponse(ToXContent toXContent, Message<JsonObject> message) {

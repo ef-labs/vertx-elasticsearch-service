@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 /**
  * ElasticSearch configuration is read from JSON, but also tries to read environment variables.
- * <p/>
+ * <p>
  * Environment variables include:
  * ES_CLUSTER_NAME - the ES cluster name to connect to
  * ES_TRANSPORT_ADDRESSES - the ES nodes to connect to in the form hostname:port|hostname:port
