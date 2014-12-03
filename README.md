@@ -1,4 +1,6 @@
-# ElasticSearch on the Vert.x Event Bus
+# Vert.x ElasticSearch Service
+
+Supports event bus service proxying.
 
 
 ## Configuration
@@ -37,14 +39,9 @@ NOTE: No configuration is needed if running elastic search locally with the defa
 
 #### Dependency Injection and the HK2VerticleFactory
 
-The `ElasticSearch` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create a guice module if that is your container of choice.
+The `ElasticSearch` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create your own bindings for your container of choice.
 
-There are two ways to enable DI (adapt HK2 version if different):
-
-1. In the vert.x langs.properties set the java value to:  java=com.englishtown~vertx-mod-hk2~1.7.0:com.englishtown.vertx.hk2.HK2VerticleFactory
-2. Pass a system property at startup like this: -Dvertx.langs.java=com.englishtown~vertx-mod-hk2~1.7.0:com.englishtown.vertx.hk2.HK2VerticleFactory
-
-See the [englishtown/vertx-mod-hk2](https://github.com/englishtown/vertx-mod-hk2) project for more details.
+See the [englishtown/vertx-hk2](https://github.com/englishtown/vertx-hk2) project for more details.
 
 
 ## Action Commands

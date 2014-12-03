@@ -1,8 +1,0 @@
-{
-    "main": "com.englishtown.vertx.elasticsearch.ElasticSearch",
-    "description": "ElasticSearch over the vert.x event bus",
-    "licenses": ["The MIT License"],
-    "author": "Englishtown",
-    "keywords": ["ElasticSearch", "elasticsearch", "elastic search", "Lucene", "lucene", "search"],
-    "homepage": "https://github.com/englishtown/vertx-mod-elasticsearch"
-}

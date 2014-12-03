@@ -1,0 +1,12 @@
+{
+    "main": "java-hk2:com.englishtown.vertx.elasticsearch.ElasticSearchServiceVerticle",
+    "options": {
+        "worker": false,
+        "config": {
+            "hk2_binder": [
+                "com.englishtown.vertx.hk2.ElasticSearchBinder"
+            ],
+            "address": "et.elasticsearch"
+        }
+    }
+}
