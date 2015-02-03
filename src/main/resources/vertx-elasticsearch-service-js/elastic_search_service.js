@@ -14,6 +14,7 @@
  * under the License.
  */
 
+/** @module vertx-elasticsearch-service-js/elastic_search_service */
 var utils = require('vertx-js/util/utils');
 
 var io = Packages.io;
@@ -24,13 +25,18 @@ var SearchOptions = com.englishtown.vertx.elasticsearch.SearchOptions;
 /**
  ElasticSearch service
 
-  @class
+ @class
 */
 var ElasticSearchService = function(j_val) {
 
   var j_elasticSearchService = j_val;
   var that = this;
 
+  /**
+
+   @public
+
+   */
   this.start = function() {
     var __args = arguments;
     if (__args.length === 0) {
@@ -38,6 +44,11 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+
+   */
   this.stop = function() {
     var __args = arguments;
     if (__args.length === 0) {
@@ -45,6 +56,15 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param index {string} 
+   @param type {string} 
+   @param id {string} 
+   @param source {Object} 
+   @param resultHandler {function} 
+   */
   this.index = function(index, type, id, source, resultHandler) {
     var __args = arguments;
     if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
@@ -58,6 +78,14 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param index {string} 
+   @param type {string} 
+   @param id {string} 
+   @param resultHandler {function} 
+   */
   this.get = function(index, type, id, resultHandler) {
     var __args = arguments;
     if (__args.length === 4 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'function') {
@@ -71,6 +99,13 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param indices {Array.<string>} 
+   @param options {Object} 
+   @param resultHandler {function} 
+   */
   this.search = function(indices, options, resultHandler) {
     var __args = arguments;
     if (__args.length === 3 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'object' && typeof __args[2] === 'function') {
@@ -84,6 +119,13 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param scrollId {string} 
+   @param scroll {string} 
+   @param resultHandler {function} 
+   */
   this.scroll = function(scrollId, scroll, resultHandler) {
     var __args = arguments;
     if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'function') {
@@ -97,6 +139,14 @@ var ElasticSearchService = function(j_val) {
     } else utils.invalidArgs();
   };
 
+  /**
+
+   @public
+   @param index {string} 
+   @param type {string} 
+   @param id {string} 
+   @param resultHandler {function} 
+   */
   this.delete = function(index, type, id, resultHandler) {
     var __args = arguments;
     if (__args.length === 4 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'function') {
@@ -116,6 +166,13 @@ var ElasticSearchService = function(j_val) {
   this._jdel = j_elasticSearchService;
 };
 
+/**
+
+ @memberof module:vertx-elasticsearch-service-js/elastic_search_service
+ @param vertx {Vertx} 
+ @param address {string} 
+ @return {ElasticSearchService}
+ */
 ElasticSearchService.createEventBusProxy = function(vertx, address) {
   var __args = arguments;
   if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
