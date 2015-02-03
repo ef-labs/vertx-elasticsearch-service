@@ -1,250 +1,185 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.promises.*;
-import com.englishtown.vertx.elasticsearch.ElasticSearch;
-import com.englishtown.vertx.promises.WhenEventBus;
-import com.englishtown.vertx.promises.impl.DefaultWhenEventBus;
+import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.SearchOptions;
+import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.test.core.VertxTestBase;
+import org.elasticsearch.action.search.SearchType;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.Future;
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.eventbus.Message;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.testtools.TestVerticle;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.vertx.testtools.VertxAssert.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
- * {@link ElasticSearch} integration test
+ * {@link com.englishtown.vertx.elasticsearch.ElasticSearchServiceVerticle} integration test
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IntegrationTest extends TestVerticle {
+public class IntegrationTest extends VertxTestBase {
 
+    private ElasticSearchService service;
     private String id = "integration-test-1";
     private String index = "test_index";
     private String type = "test_type";
     private String source_user = "englishtown";
     private String source_message = "vertx elastic search";
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        service = ElasticSearchService.createEventBusProxy(vertx, "et.elasticsearch");
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        vertx.deployVerticle("service:com.englishtown.vertx:vertx-elasticsearch-service", result -> {
+            if (result.failed()) {
+                result.cause().printStackTrace();
+                fail();
+            }
+            latch.countDown();
+        });
+
+        latch.await(2, TimeUnit.SECONDS);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        service.stop();
+    }
+
     @Test
     public void test1Index() throws Exception {
 
-        JsonObject message = new JsonObject()
-                .putString("action", "index")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString(ElasticSearch.CONST_TYPE, type)
-                .putString(ElasticSearch.CONST_ID, id)
-                .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                                .putString("user", source_user)
-                                .putString("message", source_message)
-                );
+        JsonObject source = new JsonObject()
+                .put("user", source_user)
+                .put("message", source_message);
 
-        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-            @Override
-            public void handle(Message<JsonObject> reply) {
-                JsonObject body = reply.body();
-                assertEquals("ok", body.getString("status"));
-                assertEquals(index, body.getString(ElasticSearch.CONST_INDEX));
-                assertEquals(type, body.getString(ElasticSearch.CONST_TYPE));
-                assertEquals(id, body.getString(ElasticSearch.CONST_ID));
-                assertTrue(body.getInteger(ElasticSearch.CONST_VERSION, 0) > 0);
-                testComplete();
-            }
+        service.index(index, type, id, source, result -> {
+
+            assertTrue(result.succeeded());
+            JsonObject json = result.result();
+
+            assertEquals(index, json.getString(DefaultElasticSearchService.CONST_INDEX));
+            assertEquals(type, json.getString(DefaultElasticSearchService.CONST_TYPE));
+            assertEquals(id, json.getString(DefaultElasticSearchService.CONST_ID));
+            assertTrue(json.getInteger(DefaultElasticSearchService.CONST_VERSION, 0) > 0);
+
+            testComplete();
+
         });
 
-    }
-
-
-    @Test
-    public void test2Index_Multiple() throws Exception {
-
-        int count = 100;
-        WhenEventBus eventBus = new DefaultWhenEventBus(vertx, container);
-        When<Message<JsonObject>> when = new When<>();
-        List<Promise<Message<JsonObject>>> promises = new ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
-            JsonObject message = new JsonObject()
-                    .putString("action", "index")
-                    .putString(ElasticSearch.CONST_INDEX, index)
-                    .putString(ElasticSearch.CONST_TYPE, type)
-                    .putString(ElasticSearch.CONST_ID, id + i)
-                    .putObject(ElasticSearch.CONST_SOURCE, new JsonObject()
-                                    .putString("user", source_user)
-                                    .putString("message", source_message + " " + i)
-                    );
-            promises.add(eventBus.<JsonObject>send(ElasticSearch.DEFAULT_ADDRESS, message));
-        }
-
-        when.all(promises).then(
-                new FulfilledRunnable<List<? extends Message<JsonObject>>>() {
-                    @Override
-                    public Promise<List<? extends Message<JsonObject>>> run(List<? extends Message<JsonObject>> replies) {
-                        assertEquals(100, replies.size());
-                        for (Message<JsonObject> reply : replies) {
-                            assertEquals("ok", reply.body().getString("status"));
-                        }
-                        testComplete();
-                        return null;
-                    }
-                },
-                new RejectedRunnable<List<? extends Message<JsonObject>>>() {
-                    @Override
-                    public Promise<List<? extends Message<JsonObject>>> run(Value<List<? extends Message<JsonObject>>> value) {
-                        fail();
-                        testComplete();
-                        return null;
-                    }
-                }
-        );
+        await();
 
     }
 
     @Test
     public void test3Get() throws Exception {
 
-        JsonObject message = new JsonObject()
-                .putString("action", "get")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString(ElasticSearch.CONST_TYPE, type)
-                .putString(ElasticSearch.CONST_ID, id);
+        service.get(index, type, id, result -> {
 
-        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-            @Override
-            public void handle(Message<JsonObject> reply) {
-                JsonObject body = reply.body();
-                assertEquals("ok", body.getString("status"));
-                assertEquals(index, body.getString(ElasticSearch.CONST_INDEX));
-                assertEquals(type, body.getString(ElasticSearch.CONST_TYPE));
-                assertEquals(id, body.getString(ElasticSearch.CONST_ID));
-                assertTrue(body.getInteger(ElasticSearch.CONST_VERSION, 0) > 0);
-                JsonObject source = body.getObject(ElasticSearch.CONST_SOURCE);
-                assertNotNull(source);
-                if (source != null) {
-                    assertEquals(source_user, source.getString("user"));
-                    assertEquals(source_message, source.getString("message"));
-                }
-                testComplete();
-            }
+            assertTrue(result.succeeded());
+            JsonObject body = result.result();
+
+            assertEquals(index, body.getString(DefaultElasticSearchService.CONST_INDEX));
+            assertEquals(type, body.getString(DefaultElasticSearchService.CONST_TYPE));
+            assertEquals(id, body.getString(DefaultElasticSearchService.CONST_ID));
+            assertTrue(body.getInteger(DefaultElasticSearchService.CONST_VERSION, 0) > 0);
+
+            JsonObject source = body.getJsonObject(DefaultElasticSearchService.CONST_SOURCE);
+            assertNotNull(source);
+            assertEquals(source_user, source.getString("user"));
+            assertEquals(source_message, source.getString("message"));
+
+            testComplete();
+
         });
+
+        await();
 
     }
 
     @Test
     public void test4Search_Simple() throws Exception {
 
-        JsonObject message = new JsonObject()
-                .putString("action", "search")
-                .putNumber("timeout", 100)
-                .putNumber("size", 10)
-                .putNumber("from", 10)
-                .putArray("fields", new JsonArray()
-                        .addString("user")
-                        .addString("message"))
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
+        SearchOptions options = new SearchOptions()
+                .setTimeout(1000L)
+                .setSize(10)
+                .setFrom(10)
+                .addField("user")
+                .addField("message")
+                .setQuery(new JsonObject().put("match_all", new JsonObject()));
 
-        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-            @Override
-            public void handle(Message<JsonObject> reply) {
-                assertEquals("ok", reply.body().getString("status"));
-                testComplete();
-            }
+        service.search(index, options, result -> {
+
+            assertTrue(result.succeeded());
+            JsonObject json = result.result();
+            assertNotNull(json);
+            testComplete();
+
         });
 
+        await();
     }
 
     @Test
     public void test5Scroll() throws Exception {
 
-        JsonObject message = new JsonObject()
-                .putString("action", "search")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString("search_type", "scan")
-                .putString("scroll", "5m")
-                .putObject("query", new JsonObject().putObject("match_all", new JsonObject()));
+        SearchOptions options = new SearchOptions()
+                .setSearchType(SearchType.SCAN)
+                .setScroll("5m")
+                .setQuery(new JsonObject().put("match_all", new JsonObject()));
 
-        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-            @Override
-            public void handle(Message<JsonObject> reply) {
-                assertEquals("ok", reply.body().getString("status"));
-                String scrollId = reply.body().getString("_scroll_id");
-                assertNotNull(scrollId);
+        service.search(index, options, result1 -> {
 
-                JsonObject message = new JsonObject()
-                        .putString("action", "scroll")
-                        .putString("_scroll_id", scrollId)
-                        .putString("scroll", "5m");
+            assertTrue(result1.succeeded());
+            JsonObject json = result1.result();
 
-                vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-                    @Override
-                    public void handle(Message<JsonObject> reply) {
-                        assertEquals("ok", reply.body().getString("status"));
-                        JsonObject hits = reply.body().getObject("hits");
-                        assertNotNull(hits);
-                        JsonArray hitsArray = hits.getArray("hits");
-                        assertNotNull(hitsArray);
-                        assertTrue(hitsArray.size() > 0);
-                        testComplete();
-                    }
-                });
-            }
+            String scrollId = json.getString("_scroll_id");
+            assertNotNull(scrollId);
+
+            service.scroll(scrollId, "5m", result2 -> {
+
+                assertTrue(result2.succeeded());
+                JsonObject json2 = result2.result();
+
+                JsonObject hits = json2.getJsonObject("hits");
+                assertNotNull(hits);
+                JsonArray hitsArray = hits.getJsonArray("hits");
+                assertNotNull(hitsArray);
+                assertTrue(hitsArray.size() > 0);
+
+                testComplete();
+
+            });
+
         });
 
+        await();
     }
 
     @Test
     public void test6Delete() throws Exception {
 
-        JsonObject message = new JsonObject()
-                .putString("action", "delete")
-                .putString(ElasticSearch.CONST_INDEX, index)
-                .putString(ElasticSearch.CONST_TYPE, type)
-                .putString(ElasticSearch.CONST_ID, id);
+        service.delete(index, type, id, result -> {
 
-        vertx.eventBus().send(ElasticSearch.DEFAULT_ADDRESS, message, new Handler<Message<JsonObject>>() {
-            @Override
-            public void handle(Message<JsonObject> reply) {
-                JsonObject body = reply.body();
-                assertEquals("ok", body.getString("status"));
-                assertEquals(index, body.getString(ElasticSearch.CONST_INDEX));
-                assertEquals(type, body.getString(ElasticSearch.CONST_TYPE));
-                assertEquals(id, body.getString(ElasticSearch.CONST_ID));
-                assertTrue(body.getInteger(ElasticSearch.CONST_VERSION, 0) > 0);
-                testComplete();
-            }
+            assertTrue(result.succeeded());
+            JsonObject json = result.result();
+
+            assertEquals(index, json.getString(DefaultElasticSearchService.CONST_INDEX));
+            assertEquals(type, json.getString(DefaultElasticSearchService.CONST_TYPE));
+            assertEquals(id, json.getString(DefaultElasticSearchService.CONST_ID));
+            assertTrue(json.getInteger(DefaultElasticSearchService.CONST_VERSION, 0) > 0);
+
+            testComplete();
+
         });
 
-    }
-
-    /**
-     * Override this method to signify that start is complete sometime _after_ the start() method has returned
-     * This is useful if your verticle deploys other verticles or modules and you don't want this verticle to
-     * be considered started until the other modules and verticles have been started.
-     *
-     * @param startedResult When you are happy your verticle is started set the result
-     */
-    @Override
-    public void start(final Future<Void> startedResult) {
-
-        container.deployVerticle(ElasticSearch.class.getName(), new Handler<AsyncResult<String>>() {
-            @Override
-            public void handle(AsyncResult<String> result) {
-                if (result.succeeded()) {
-                    start();
-                    startedResult.setResult(null);
-                } else {
-                    startedResult.setFailure(result.cause());
-                }
-            }
-        });
-
+        await();
     }
 
 }

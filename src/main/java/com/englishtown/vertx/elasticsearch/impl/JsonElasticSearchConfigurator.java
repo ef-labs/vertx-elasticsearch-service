@@ -1,11 +1,11 @@
 package com.englishtown.vertx.elasticsearch.impl;
 
 import com.englishtown.vertx.elasticsearch.ElasticSearchConfigurator;
+import io.vertx.core.Vertx;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.platform.Container;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
     public static final String CONFIG_PORT = "port";
 
     @Inject
-    public JsonElasticSearchConfigurator(Container container) {
-        this(container.config());
+    public JsonElasticSearchConfigurator(Vertx vertx) {
+        this(vertx.getOrCreateContext().config());
     }
 
     public JsonElasticSearchConfigurator(JsonObject config) {
@@ -52,10 +52,10 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
 
     protected void initTransportAddresses(JsonObject config) {
 
-        JsonArray jsonArray = config.getArray(CONFIG_TRANSPORT_ADDRESSES);
+        JsonArray jsonArray = config.getJsonArray(CONFIG_TRANSPORT_ADDRESSES);
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.size(); i++) {
-                JsonObject transportAddress = jsonArray.get(i);
+                JsonObject transportAddress = jsonArray.getJsonObject(i);
                 String hostname = transportAddress.getString(CONFIG_HOSTNAME);
 
                 if (hostname != null && !hostname.isEmpty()) {

@@ -1,8 +1,8 @@
 package com.englishtown.vertx.elasticsearch.impl;
 
+import io.vertx.core.Vertx;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.platform.Container;
+import io.vertx.core.json.JsonObject;
 
 import javax.inject.Inject;
 
@@ -19,8 +19,8 @@ public class EnvElasticSearchConfigurator extends JsonElasticSearchConfigurator 
     public static final String ENV_VAR_TRANSPORT_ADDRESSES = "ES_TRANSPORT_ADDRESSES";
 
     @Inject
-    public EnvElasticSearchConfigurator(Container container) {
-        super(container);
+    public EnvElasticSearchConfigurator(Vertx vertx) {
+        super(vertx);
     }
 
     public EnvElasticSearchConfigurator(JsonObject config) {

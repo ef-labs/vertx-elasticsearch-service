@@ -1,7 +1,9 @@
 package com.englishtown.vertx.hk2;
 
 import com.englishtown.vertx.elasticsearch.ElasticSearchConfigurator;
+import com.englishtown.vertx.elasticsearch.ElasticSearchService;
 import com.englishtown.vertx.elasticsearch.TransportClientFactory;
+import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
 import com.englishtown.vertx.elasticsearch.impl.DefaultTransportClientFactory;
 import com.englishtown.vertx.elasticsearch.impl.EnvElasticSearchConfigurator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -19,6 +21,7 @@ public class ElasticSearchBinder extends AbstractBinder {
 
         bind(DefaultTransportClientFactory.class).to(TransportClientFactory.class);
         bind(EnvElasticSearchConfigurator.class).to(ElasticSearchConfigurator.class);
+        bind(DefaultElasticSearchService.class).to(ElasticSearchService.class);
 
     }
 }
