@@ -1,9 +1,10 @@
 package com.englishtown.vertx.elasticsearch;
 
-import io.vertx.codegen.annotations.Options;
+import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Search operation options
  */
-@Options
+@DataObject
 public class SearchOptions {
 
     private List<String> types = new ArrayList<>();
@@ -24,6 +25,7 @@ public class SearchOptions {
     private Integer from;
     private List<String> fields = new ArrayList<>();
     private Long timeout;
+    private List<SortOption> sorts = new ArrayList<>();
 
     public static final String JSON_FIELD_QUERY = "query";
     public static final String JSON_FIELD_FILTER = "filter";
@@ -35,6 +37,7 @@ public class SearchOptions {
     public static final String JSON_FIELD_TIMEOUT = "timeout";
     public static final String JSON_FIELD_TYPES = "types";
     public static final String JSON_FIELD_FIELDS = "fields";
+    public static final String JSON_FIELD_SORTS = "sorts";
 
     public SearchOptions() {
     }
@@ -50,6 +53,7 @@ public class SearchOptions {
         from = other.getFrom();
         fields = other.getFields();
         timeout = other.getTimeout();
+        sorts = other.getSorts();
     }
 
     public SearchOptions(JsonObject json) {
@@ -78,6 +82,13 @@ public class SearchOptions {
         if (fieldsJson != null) {
             for (int i = 0; i < fieldsJson.size(); i++) {
                 fields.add(fieldsJson.getString(i));
+            }
+        }
+
+        JsonArray sortOptionsJson = json.getJsonArray(JSON_FIELD_SORTS);
+        if (sortOptionsJson != null) {
+            for (int i = 0; i < sortOptionsJson.size(); i++) {
+                sorts.add(new SortOption(sortOptionsJson.getJsonObject(i)));
             }
         }
 
@@ -173,6 +184,15 @@ public class SearchOptions {
         return this;
     }
 
+    public List<SortOption> getSorts() {
+        return sorts;
+    }
+
+    public SearchOptions addSort(String field, SortOrder order) {
+        sorts.add(new SortOption().setField(field).setOrder(order));
+        return this;
+    }
+
     public JsonObject toJson() {
 
         JsonObject json = new JsonObject();
@@ -206,6 +226,11 @@ public class SearchOptions {
         }
         if (!fields.isEmpty()) {
             json.put(JSON_FIELD_FIELDS, new JsonArray(fields));
+        }
+        if (!sorts.isEmpty()) {
+            JsonArray jsonSorts = new JsonArray();
+            sorts.forEach(sort -> jsonSorts.add(sort.toJson()));
+            json.put(JSON_FIELD_SORTS, jsonSorts);
         }
 
         return json;
