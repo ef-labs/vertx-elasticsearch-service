@@ -1,6 +1,6 @@
 package com.englishtown.vertx.elasticsearch;
 
-import io.vertx.codegen.annotations.Options;
+import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Search operation options
  */
-@Options
+@DataObject
 public class SearchOptions {
 
     private List<String> types = new ArrayList<>();

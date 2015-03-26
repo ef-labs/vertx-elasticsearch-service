@@ -12,9 +12,10 @@
     </parent>
 
     <properties>
-        <es.version>1.4.2</es.version>
-        <hk2.version>2.0.0-RC1</hk2.version>
-        <when.version>4.0.0-RC1</when.version>
+        <es.version>1.4.4</es.version>
+        <vertx.version>3.0.0-milestone3</vertx.version>
+        <hk2.version>2.0.0-RC2</hk2.version>
+        <when.version>4.0.0-RC2</when.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
