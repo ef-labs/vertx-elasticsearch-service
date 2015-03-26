@@ -1,0 +1,15 @@
+== SortOption
+
+++++
+ Sort option
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+
+|[[field]]`field`
+|`String`
+|-|===

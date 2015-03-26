@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.test.core.VertxTestBase;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -112,6 +113,7 @@ public class IntegrationTest extends VertxTestBase {
                 .setFrom(10)
                 .addField("user")
                 .addField("message")
+                .addSort("user", SortOrder.DESC)
                 .setQuery(new JsonObject().put("match_all", new JsonObject()));
 
         service.search(index, options, result -> {

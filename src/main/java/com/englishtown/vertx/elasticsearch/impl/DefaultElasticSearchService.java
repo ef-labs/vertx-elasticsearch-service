@@ -165,15 +165,21 @@ public class DefaultElasticSearchService implements ElasticSearchService {
                 builder.setFrom(options.getFrom());
             }
 
-            //Set requested fields
+            // Set requested fields
             if (!options.getFields().isEmpty()) {
                 options.getFields().forEach(builder::addField);
             }
 
-            //Set query timeout
+            // Set query timeout
             if (options.getTimeout() != null) {
                 builder.setTimeout(new TimeValue(options.getTimeout()));
             }
+
+            // Add sorts
+            if (!options.getSorts().isEmpty()) {
+                options.getSorts().forEach(sort -> builder.addSort(sort.getField(), sort.getOrder()));
+            }
+
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
