@@ -28,13 +28,18 @@ import io.vertx.core.json.JsonArray;
 import java.util.ArrayList;import java.util.HashSet;import java.util.List;import java.util.Map;import java.util.Set;import java.util.UUID;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
+import com.englishtown.vertx.elasticsearch.DeleteOptions;
+import io.vertx.core.Vertx;
+import com.englishtown.vertx.elasticsearch.GetOptions;
 import java.util.List;
 import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.UpdateOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
-import io.vertx.core.Vertx;
+import com.englishtown.vertx.elasticsearch.IndexOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 
 /*
   Generated Proxy code - DO NOT EDIT
@@ -69,23 +74,27 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
         break;
       }
       case "index": {
-        service.index((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), (io.vertx.core.json.JsonObject)json.getValue("source"), createHandler(msg));
+        service.index((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (io.vertx.core.json.JsonObject)json.getValue("source"), new com.englishtown.vertx.elasticsearch.IndexOptions(json.getJsonObject("options")), createHandler(msg));
+        break;
+      }
+      case "update": {
+        service.update((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), new com.englishtown.vertx.elasticsearch.UpdateOptions(json.getJsonObject("options")), createHandler(msg));
         break;
       }
       case "get": {
-        service.get((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), createHandler(msg));
+        service.get((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), new com.englishtown.vertx.elasticsearch.GetOptions(json.getJsonObject("options")), createHandler(msg));
         break;
       }
       case "search": {
         service.search(convertList(json.getJsonArray("indices").getList()), new com.englishtown.vertx.elasticsearch.SearchOptions(json.getJsonObject("options")), createHandler(msg));
         break;
       }
-      case "scroll": {
-        service.scroll((java.lang.String)json.getValue("scrollId"), (java.lang.String)json.getValue("scroll"), createHandler(msg));
+      case "searchScroll": {
+        service.searchScroll((java.lang.String)json.getValue("scrollId"), new com.englishtown.vertx.elasticsearch.SearchScrollOptions(json.getJsonObject("options")), createHandler(msg));
         break;
       }
       case "delete": {
-        service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), createHandler(msg));
+        service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), new com.englishtown.vertx.elasticsearch.DeleteOptions(json.getJsonObject("options")), createHandler(msg));
         break;
       }
       default: {

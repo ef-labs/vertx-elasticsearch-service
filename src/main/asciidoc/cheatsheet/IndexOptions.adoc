@@ -1,0 +1,36 @@
+== IndexOptions
+
+++++
+ Index operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+
+|[[routing]]`routing`
+|`String`
+|-
+|[[parent]]`parent`
+|`String`
+|-
+|[[refresh]]`refresh`
+|`Boolean`
+|-
+|[[version]]`version`
+|`Number`
+|-
+|[[timeout]]`timeout`
+|`String`
+|-
+|[[id]]`id`
+|`String`
+|-
+|[[timestamp]]`timestamp`
+|`String`
+|-
+|[[ttl]]`ttl`
+|`Number`
+|-|===
