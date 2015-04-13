@@ -38,7 +38,7 @@ public class IntegrationTest extends VertxTestBase {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        vertx.deployVerticle("service:com.englishtown.vertx:vertx-elasticsearch-service", result -> {
+        vertx.deployVerticle("service:com.englishtown.vertx.vertx-elasticsearch-service", result -> {
             if (result.failed()) {
                 result.cause().printStackTrace();
                 fail();
