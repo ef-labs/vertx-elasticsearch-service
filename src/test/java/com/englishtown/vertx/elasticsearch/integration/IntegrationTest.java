@@ -1,6 +1,8 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
 import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.IndexOptions;
+import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
 import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
 import io.vertx.core.json.JsonArray;
@@ -36,7 +38,7 @@ public class IntegrationTest extends VertxTestBase {
 
         CountDownLatch latch = new CountDownLatch(1);
 
-        vertx.deployVerticle("service:com.englishtown.vertx:vertx-elasticsearch-service", result -> {
+        vertx.deployVerticle("service:com.englishtown.vertx.vertx-elasticsearch-service", result -> {
             if (result.failed()) {
                 result.cause().printStackTrace();
                 fail();
@@ -60,7 +62,9 @@ public class IntegrationTest extends VertxTestBase {
                 .put("user", source_user)
                 .put("message", source_message);
 
-        service.index(index, type, id, source, result -> {
+        IndexOptions options = new IndexOptions().setId(id);
+
+        service.index(index, type, source, options, result -> {
 
             assertTrue(result.succeeded());
             JsonObject json = result.result();
@@ -108,7 +112,7 @@ public class IntegrationTest extends VertxTestBase {
     public void test4Search_Simple() throws Exception {
 
         SearchOptions options = new SearchOptions()
-                .setTimeout(1000L)
+                .setTimeout("1000")
                 .setSize(10)
                 .setFrom(10)
                 .addField("user")
@@ -144,7 +148,9 @@ public class IntegrationTest extends VertxTestBase {
             String scrollId = json.getString("_scroll_id");
             assertNotNull(scrollId);
 
-            service.scroll(scrollId, "5m", result2 -> {
+            SearchScrollOptions scrollOptions = new SearchScrollOptions().setScroll("5m");
+
+            service.searchScroll(scrollId, scrollOptions, result2 -> {
 
                 assertTrue(result2.succeeded());
                 JsonObject json2 = result2.result();

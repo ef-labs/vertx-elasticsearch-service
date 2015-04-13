@@ -1,7 +1,8 @@
 # Vert.x ElasticSearch Service
 
-Supports event bus service proxying.
+Vert.x 3 elasticsearch service with event bus proxying.
 
+# TODO: Update the documents for vert.x 3 service proxying.
 
 ## Configuration
 
@@ -39,7 +40,7 @@ NOTE: No configuration is needed if running elastic search locally with the defa
 
 #### Dependency Injection and the HK2VerticleFactory
 
-The `ElasticSearch` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create your own bindings for your container of choice.
+The `ElasticSearchServiceVerticle` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create your own bindings for your container of choice.
 
 See the [englishtown/vertx-hk2](https://github.com/englishtown/vertx-hk2) project for more details.
 
@@ -197,7 +198,7 @@ Send a json message to the event bus with the following structure:
     "_type": <type>,
     "_types": <types>,
     "query": <query>,
-    "filter": <filter>,
+    "postFilter": <postFilter>,
     "facets": <facets>,
     "search_type": <search_type>,
     "scroll": <scroll>,
@@ -213,7 +214,7 @@ Send a json message to the event bus with the following structure:
 * `type` - a string type to be searched.  This is optional.
 * `types` - an array of string types to be searched.  This is optional.
 * `query` - a json object, see the elastic search documentation for details (http://www.elasticsearch.org/guide/reference/query-dsl/).  This is optional.
-* `filter` - a json object, see the elastic search documentation for details (http://www.elasticsearch.org/guide/reference/api/search/filter/).  This is optional.
+* `postFilter` - a json object, see the elastic search documentation for details (http://www.elasticsearch.org/guide/reference/api/search/postFilter/).  This is optional.
 * `facets` - a json object, see the elastic search documentation for details (http://www.elasticsearch.org/guide/reference/api/search/facets/).  This is optional.
 * `search_type` - a string to specify the type of search to be performed (http://www.elasticsearch.org/guide/reference/api/search/search-type/).  This is optional.  Possible values include:
     * query_and_fetch - execute the query on all relevant shards

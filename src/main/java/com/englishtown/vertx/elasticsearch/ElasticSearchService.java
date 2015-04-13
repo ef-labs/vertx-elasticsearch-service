@@ -29,24 +29,65 @@ public interface ElasticSearchService {
     @ProxyIgnore
     void stop();
 
-    default void index(String index, JsonObject source, Handler<AsyncResult<JsonObject>> resultHandler) {
-        index(index, null, source, resultHandler);
-    }
-
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/index_.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param source        the source to be indexed
+     * @param resultHandler result handler callback
+     */
     default void index(String index, String type, JsonObject source, Handler<AsyncResult<JsonObject>> resultHandler) {
-        index(index, type, null, source, resultHandler);
+        index(index, type, source, new IndexOptions(), resultHandler);
     }
 
-    void index(String index, String type, String id, JsonObject source, Handler<AsyncResult<JsonObject>> resultHandler);
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/index_.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param source        the source to be indexed
+     * @param options       optional index options (id, timeout, ttl, etc.)
+     * @param resultHandler result handler callback
+     */
+    void index(String index, String type, JsonObject source, IndexOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
-    default void get(String index, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
-        get(index, id, null, resultHandler);
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/java-update-api.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param id            the source id to update
+     * @param options       the update options (doc, script, etc.)
+     * @param resultHandler result handler callback
+     */
+    void update(String index, String type, String id, UpdateOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
+
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/get.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param id            the source id to update
+     * @param resultHandler result handler callback
+     */
+    default void get(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+        get(index, type, id, new GetOptions(), resultHandler);
     }
 
-    void get(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler);
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/get.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param id            the source id to update
+     * @param options       the update options
+     * @param resultHandler result handler callback
+     */
+    void get(String index, String type, String id, GetOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
     default void search(String index, Handler<AsyncResult<JsonObject>> resultHandler) {
-        search(index, null, resultHandler);
+        search(index, new SearchOptions(), resultHandler);
     }
 
     default void search(String index, SearchOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
@@ -54,13 +95,45 @@ public interface ElasticSearchService {
     }
 
     default void search(List<String> indices, Handler<AsyncResult<JsonObject>> resultHandler) {
-        search(indices, null, resultHandler);
+        search(indices, new SearchOptions(), resultHandler);
     }
 
     void search(List<String> indices, SearchOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
-    void scroll(String scrollId, String scroll, Handler<AsyncResult<JsonObject>> resultHandler);
+    default void searchScroll(String scrollId, Handler<AsyncResult<JsonObject>> resultHandler) {
+        searchScroll(scrollId, new SearchScrollOptions(), resultHandler);
+    }
 
-    void delete(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler);
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/reference/1.4/search-request-scroll.html
+     *
+     * @param scrollId
+     * @param options
+     * @param resultHandler
+     */
+    void searchScroll(String scrollId, SearchScrollOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
+
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/delete.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param id            the source id to delete
+     * @param resultHandler result handler callback
+     */
+    default void delete(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+        delete(index, type, id, new DeleteOptions(), resultHandler);
+    }
+
+    /**
+     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/delete.html
+     *
+     * @param index         the index name
+     * @param type          the type name
+     * @param id            the source id to delete
+     * @param options       optional delete options (timeout, etc.)
+     * @param resultHandler result handler callback
+     */
+    void delete(String index, String type, String id, DeleteOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
 }

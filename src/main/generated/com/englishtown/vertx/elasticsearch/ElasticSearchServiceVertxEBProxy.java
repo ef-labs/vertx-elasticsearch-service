@@ -23,13 +23,18 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 import java.util.ArrayList;import java.util.HashSet;import java.util.List;import java.util.Map;import java.util.Set;import io.vertx.serviceproxy.ProxyHelper;
+import com.englishtown.vertx.elasticsearch.DeleteOptions;
+import io.vertx.core.Vertx;
+import com.englishtown.vertx.elasticsearch.GetOptions;
 import java.util.List;
 import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.UpdateOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
-import io.vertx.core.Vertx;
+import com.englishtown.vertx.elasticsearch.IndexOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 
 /*
   Generated Proxy code - DO NOT EDIT
@@ -52,7 +57,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
   public void stop() {
   }
 
-  public void index(String index, String type, String id, JsonObject source, Handler<AsyncResult<JsonObject>> resultHandler) {
+  public void index(String index, String type, JsonObject source, IndexOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
@@ -60,8 +65,8 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     JsonObject _json = new JsonObject();
     _json.put("index", index);
     _json.put("type", type);
-    _json.put("id", id);
     _json.put("source", source);
+    _json.put("options", options.toJson());
     DeliveryOptions _deliveryOptions = new DeliveryOptions();
     _deliveryOptions.addHeader("action", "index");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
@@ -73,7 +78,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     });
   }
 
-  public void get(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+  public void update(String index, String type, String id, UpdateOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
@@ -82,6 +87,28 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("index", index);
     _json.put("type", type);
     _json.put("id", id);
+    _json.put("options", options.toJson());
+    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "update");
+    _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+  }
+
+  public void get(String index, String type, String id, GetOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("index", index);
+    _json.put("type", type);
+    _json.put("id", id);
+    _json.put("options", options.toJson());
     DeliveryOptions _deliveryOptions = new DeliveryOptions();
     _deliveryOptions.addHeader("action", "get");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
@@ -112,16 +139,16 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     });
   }
 
-  public void scroll(String scrollId, String scroll, Handler<AsyncResult<JsonObject>> resultHandler) {
+  public void searchScroll(String scrollId, SearchScrollOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
     }
     JsonObject _json = new JsonObject();
     _json.put("scrollId", scrollId);
-    _json.put("scroll", scroll);
+    _json.put("options", options.toJson());
     DeliveryOptions _deliveryOptions = new DeliveryOptions();
-    _deliveryOptions.addHeader("action", "scroll");
+    _deliveryOptions.addHeader("action", "searchScroll");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -131,7 +158,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     });
   }
 
-  public void delete(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+  public void delete(String index, String type, String id, DeleteOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
     if (closed) {
       resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
       return;
@@ -140,6 +167,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("index", index);
     _json.put("type", type);
     _json.put("id", id);
+    _json.put("options", options.toJson());
     DeliveryOptions _deliveryOptions = new DeliveryOptions();
     _deliveryOptions.addHeader("action", "delete");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {

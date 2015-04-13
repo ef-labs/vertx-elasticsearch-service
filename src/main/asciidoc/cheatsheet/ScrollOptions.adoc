@@ -1,0 +1,15 @@
+== ScrollOptions
+
+++++
+ Search scroll options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+
+|[[scroll]]`scroll`
+|`String`
+|-|===
