@@ -13,9 +13,9 @@
 
     <properties>
         <es.version>1.4.4</es.version>
-        <vertx.version>3.0.0-milestone4</vertx.version>
-        <hk2.version>2.0.0-RC3</hk2.version>
-        <when.version>4.0.0-RC3</when.version>
+        <vertx.version>3.0.0-milestone5</vertx.version>
+        <hk2.version>2.0.0-RC4</hk2.version>
+        <when.version>4.0.0-RC4</when.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
