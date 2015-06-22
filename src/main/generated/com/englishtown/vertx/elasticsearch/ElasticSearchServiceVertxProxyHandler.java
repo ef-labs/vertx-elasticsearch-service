@@ -20,11 +20,14 @@ import com.englishtown.vertx.elasticsearch.ElasticSearchService;
 import io.vertx.core.Vertx;
 import io.vertx.core.Handler;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,17 +56,25 @@ import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 */
 public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
 
+  public static final long DEFAULT_CONNECTION_TIMEOUT = 5 * 60; // 5 minutes 
+
   private final Vertx vertx;
   private final ElasticSearchService service;
-  private final String address;
   private final long timerID;
   private long lastAccessed;
   private final long timeoutSeconds;
 
-  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service, String address, boolean topLevel, long timeoutSeconds) {
+  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service) {
+    this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);  }
+
+  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service,
+    long timeoutInSecond) {
+    this(vertx, service, true, timeoutInSecond);
+  }
+
+  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service, boolean topLevel, long timeoutSeconds) {
     this.vertx = vertx;
     this.service = service;
-    this.address = address;
     this.timeoutSeconds = timeoutSeconds;
     if (timeoutSeconds != -1 && !topLevel) {
       long period = timeoutSeconds * 1000 / 2;
@@ -75,6 +86,12 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       this.timerID = -1;
     }
     accessed();
+  }
+
+  public MessageConsumer<JsonObject> registerHandler(String address) {
+    MessageConsumer<JsonObject> consumer = vertx.eventBus().<JsonObject>consumer(address).handler(this);
+    this.setConsumer(consumer);
+    return consumer;
   }
 
   private void checkTimedOut(long id) {
