@@ -8,17 +8,18 @@
     <parent>
         <groupId>com.englishtown.vertx</groupId>
         <artifactId>oss-parent-vertx</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
     </parent>
 
     <properties>
         <es.version>1.4.5</es.version>
-        <vertx.version>3.0.0-SNAPSHOT</vertx.version>
-        <hk2.version>2.0.0-SNAPSHOT</hk2.version>
-        <when.version>4.0.0-SNAPSHOT</when.version>
+        <vertx.version>3.0.0</vertx.version>
+        <hk2.version>2.0.0</hk2.version>
+        <when.version>4.0.0</when.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <maven.jgitflow.plugin.version>1.0-m5.1</maven.jgitflow.plugin.version>
     </properties>
 
     <dependencies>
