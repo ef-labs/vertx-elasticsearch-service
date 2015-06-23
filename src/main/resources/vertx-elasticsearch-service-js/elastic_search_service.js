@@ -210,7 +210,7 @@ var ElasticSearchService = function(j_val) {
 ElasticSearchService.createEventBusProxy = function(vertx, address) {
   var __args = arguments;
   if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
-    return new ElasticSearchService(JElasticSearchService["createEventBusProxy(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, address));
+    return utils.convReturnVertxGen(JElasticSearchService["createEventBusProxy(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, address), ElasticSearchService);
   } else utils.invalidArgs();
 };
 
