@@ -48,4 +48,10 @@
 |-
 |[[trackScores]]`trackScores`
 |`Boolean`
+|-
+|[[templateName]]`templateName`
+|`String`
+|-
+|[[templateType]]`templateType`
+|`String`
 |-|===

@@ -4,6 +4,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
@@ -35,6 +36,9 @@ public class SearchOptions {
     private JsonObject aggregations;
     private List<SortOption> sorts = new ArrayList<>();
     private JsonObject extraSource;
+    private String templateName;
+    private ScriptService.ScriptType templateType;
+    private JsonObject templateParams;
 
     public static final String JSON_FIELD_TYPES = "types";
     public static final String JSON_FIELD_SEARCH_TYPE = "searchType";
@@ -56,6 +60,9 @@ public class SearchOptions {
     public static final String JSON_FIELD_AGGREGATIONS = "aggregations";
     public static final String JSON_FIELD_SORTS = "sorts";
     public static final String JSON_FIELD_EXTRA_SOURCE = "extraSource";
+    public static final String JSON_FIELD_TEMPLATE_NAME = "templateName";
+    public static final String JSON_FIELD_TEMPLATE_TYPE = "templateType";
+    public static final String JSON_FIELD_TEMPLATE_PARAMS = "templateParams";
 
     public SearchOptions() {
     }
@@ -81,6 +88,9 @@ public class SearchOptions {
         aggregations = other.getAggregations();
         sorts = other.getSorts();
         extraSource = other.getExtraSource();
+        templateName = other.getTemplateName();
+        templateType = other.getTemplateType();
+        templateParams = other.getTemplateParams();
     }
 
     public SearchOptions(JsonObject json) {
@@ -103,6 +113,17 @@ public class SearchOptions {
         trackScores = json.getBoolean(JSON_FIELD_TRACK_SCORES);
         aggregations = json.getJsonObject(JSON_FIELD_AGGREGATIONS);
         extraSource = json.getJsonObject(JSON_FIELD_EXTRA_SOURCE);
+        templateName = json.getString(JSON_FIELD_TEMPLATE_NAME);
+
+        if (json.containsKey(JSON_FIELD_TEMPLATE_TYPE)) {
+            for (ScriptService.ScriptType t : ScriptService.ScriptType.values()) {
+                if (t.name().equals(json.getString(JSON_FIELD_TEMPLATE_TYPE).toUpperCase())) {
+                    templateType = ScriptService.ScriptType.valueOf(json.getString(JSON_FIELD_TEMPLATE_TYPE).toUpperCase());
+                }
+            }
+        }
+
+        templateParams = json.getJsonObject(JSON_FIELD_TEMPLATE_PARAMS);
 
         String s = json.getString(JSON_FIELD_SEARCH_TYPE);
         if (s != null) searchType = SearchType.fromString(s);
@@ -296,6 +317,33 @@ public class SearchOptions {
         return this;
     }
 
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public SearchOptions setTemplateName(String templateName) {
+        this.templateName = templateName;
+        return this;
+    }
+
+    public ScriptService.ScriptType getTemplateType() {
+        return templateType;
+    }
+
+    public SearchOptions setTemplateType(ScriptService.ScriptType templateType) {
+        this.templateType = templateType;
+        return this;
+    }
+
+    public JsonObject getTemplateParams() {
+        return templateParams;
+    }
+
+    public SearchOptions setTemplateParams(JsonObject templateParams) {
+        this.templateParams = templateParams;
+        return this;
+    }
+
     public JsonObject toJson() {
 
         JsonObject json = new JsonObject();
@@ -319,6 +367,9 @@ public class SearchOptions {
         if (trackScores != null) json.put(JSON_FIELD_TRACK_SCORES, trackScores);
         if (aggregations != null) json.put(JSON_FIELD_AGGREGATIONS, aggregations);
         if (explain != null) json.put(JSON_FIELD_EXPLAIN, explain);
+        if (templateName != null) json.put(JSON_FIELD_TEMPLATE_NAME, templateName);
+        if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType);
+        if (templateParams != null) json.put(JSON_FIELD_TEMPLATE_PARAMS, templateParams);
 
         if (!sorts.isEmpty()) {
             JsonArray jsonSorts = new JsonArray();

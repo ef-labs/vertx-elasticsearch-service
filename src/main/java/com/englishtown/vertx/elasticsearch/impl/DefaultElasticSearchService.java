@@ -23,6 +23,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.script.ScriptService;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -245,6 +246,9 @@ public class DefaultElasticSearchService implements ElasticSearchService {
                 options.getSorts().forEach(sort -> builder.addSort(sort.getField(), sort.getOrder()));
             }
             if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().encode());
+            if (options.getTemplateName() != null) builder.setTemplateName(options.getTemplateName());
+            if (options.getTemplateType() != null) builder.setTemplateType(options.getTemplateType());
+            if (options.getTemplateParams() != null) builder.setTemplateParams(options.getTemplateParams().getMap());
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
