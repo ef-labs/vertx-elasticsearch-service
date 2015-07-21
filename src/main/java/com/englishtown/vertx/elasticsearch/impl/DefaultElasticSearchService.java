@@ -76,7 +76,7 @@ public class DefaultElasticSearchService implements ElasticSearchService {
     public void index(String index, String type, JsonObject source, IndexOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
 
         IndexRequestBuilder builder = client.prepareIndex(index, type)
-                .setSource(source.getMap());
+                .setSource(source.encode());
 
         if (options != null) {
             if (options.getId() != null) builder.setId(options.getId());
@@ -84,7 +84,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.getOpType() != null) builder.setOpType(options.getOpType());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
@@ -122,7 +121,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getRouting() != null) builder.setRouting(options.getRouting());
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
@@ -131,8 +129,8 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getScriptLang() != null) builder.setScriptLang(options.getScriptLang());
             if (options.getScriptParams() != null) builder.setScriptParams(options.getScriptParams().getMap());
             if (options.getRetryOnConflict() != null) builder.setRetryOnConflict(options.getRetryOnConflict());
-            if (options.getDoc() != null) builder.setDoc(options.getDoc().getMap());
-            if (options.getUpsert() != null) builder.setUpsert(options.getUpsert().getMap());
+            if (options.getDoc() != null) builder.setDoc(options.getDoc().encode());
+            if (options.getUpsert() != null) builder.setUpsert(options.getUpsert().encode());
             if (options.isDocAsUpsert() != null) builder.setDocAsUpsert(options.isDocAsUpsert());
             if (options.isDetectNoop() != null) builder.setDetectNoop(options.isDetectNoop());
             if (options.isScriptedUpsert() != null) builder.setScriptedUpsert(options.isScriptedUpsert());
@@ -246,7 +244,7 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (!options.getSorts().isEmpty()) {
                 options.getSorts().forEach(sort -> builder.addSort(sort.getField(), sort.getOrder()));
             }
-            if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().getMap());
+            if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().encode());
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
@@ -296,7 +294,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getRouting() != null) builder.setRouting(options.getRouting());
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
