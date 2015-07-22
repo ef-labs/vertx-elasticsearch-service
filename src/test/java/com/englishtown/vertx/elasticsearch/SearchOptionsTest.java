@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for {@link SearchOptions}
@@ -69,13 +70,25 @@ public class SearchOptionsTest {
 
         JsonObject json = new JsonObject();
 
-        json.put("templateType", "not-a-real-enum");
-        SearchOptions options = new SearchOptions(json);
-        assertNull(options.getTemplateType());
+        try {
+            json.put("templateType", "not-a-real-enum");
+            new SearchOptions(json);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
 
         json.put("templateType", "file");
-        options = new SearchOptions(json);
+        SearchOptions options = new SearchOptions(json);
         assertEquals(options.getTemplateType(), ScriptService.ScriptType.FILE);
+
+        json.put("templateType", "indexed");
+        options = new SearchOptions(json);
+        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INDEXED);
+
+        json.put("templateType", "inline");
+        options = new SearchOptions(json);
+        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INLINE);
 
         json.remove("templateType");
         options = new SearchOptions(json);

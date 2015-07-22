@@ -51,7 +51,4 @@
 |-
 |[[templateName]]`templateName`
 |`String`
-|-
-|[[templateType]]`templateType`
-|`String`
 |-|===

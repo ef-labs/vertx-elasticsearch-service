@@ -4,6 +4,7 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.common.base.Strings;
 import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -115,17 +116,14 @@ public class SearchOptions {
         extraSource = json.getJsonObject(JSON_FIELD_EXTRA_SOURCE);
         templateName = json.getString(JSON_FIELD_TEMPLATE_NAME);
 
-        if (json.containsKey(JSON_FIELD_TEMPLATE_TYPE)) {
-            for (ScriptService.ScriptType t : ScriptService.ScriptType.values()) {
-                if (t.name().equals(json.getString(JSON_FIELD_TEMPLATE_TYPE).toUpperCase())) {
-                    templateType = ScriptService.ScriptType.valueOf(json.getString(JSON_FIELD_TEMPLATE_TYPE).toUpperCase());
-                }
-            }
+        String s = json.getString(JSON_FIELD_TEMPLATE_TYPE);
+        if (!Strings.isNullOrEmpty(s)) {
+            templateType = ScriptService.ScriptType.valueOf(s.toUpperCase());
         }
 
         templateParams = json.getJsonObject(JSON_FIELD_TEMPLATE_PARAMS);
 
-        String s = json.getString(JSON_FIELD_SEARCH_TYPE);
+        s = json.getString(JSON_FIELD_SEARCH_TYPE);
         if (s != null) searchType = SearchType.fromString(s);
 
         JsonArray sortOptionsJson = json.getJsonArray(JSON_FIELD_SORTS);
@@ -368,7 +366,7 @@ public class SearchOptions {
         if (aggregations != null) json.put(JSON_FIELD_AGGREGATIONS, aggregations);
         if (explain != null) json.put(JSON_FIELD_EXPLAIN, explain);
         if (templateName != null) json.put(JSON_FIELD_TEMPLATE_NAME, templateName);
-        if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType);
+        if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType.toString());
         if (templateParams != null) json.put(JSON_FIELD_TEMPLATE_PARAMS, templateParams);
 
         if (!sorts.isEmpty()) {
