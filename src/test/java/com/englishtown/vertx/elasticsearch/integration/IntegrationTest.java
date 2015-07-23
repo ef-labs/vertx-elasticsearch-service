@@ -6,6 +6,8 @@ import com.englishtown.vertx.elasticsearch.SearchOptions;
 import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.test.core.VertxTestBase;
@@ -18,6 +20,8 @@ import org.junit.runners.MethodSorters;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 /**
  * {@link com.englishtown.vertx.elasticsearch.ElasticSearchServiceVerticle} integration test
@@ -91,7 +95,7 @@ public class IntegrationTest extends VertxTestBase {
     }
 
     @Test
-    public void test3Get() throws Exception {
+    public void test2Get() throws Exception {
 
         service.get(index, type, id, result -> {
 
@@ -117,7 +121,7 @@ public class IntegrationTest extends VertxTestBase {
     }
 
     @Test
-    public void test4Search_Simple() throws Exception {
+    public void test3Search_Simple() throws Exception {
 
         SearchOptions options = new SearchOptions()
                 .setTimeout("1000")
@@ -135,6 +139,26 @@ public class IntegrationTest extends VertxTestBase {
             assertNotNull(json);
             testComplete();
 
+        });
+
+        await();
+    }
+
+    @Test
+    public void test4Search_EventBus_Invalid_Enum() throws Exception {
+
+        JsonObject json = new JsonObject()
+                .put("indices", new JsonArray().add(index))
+                .put("options", new JsonObject().put("templateType", "invalid_type"));
+
+        DeliveryOptions options = new DeliveryOptions();
+        options.addHeader("action", "search");
+
+        vertx.eventBus().<JsonObject>send("et.elasticsearch", json, options, res -> {
+            assertTrue(res.failed());
+            Throwable t = res.cause();
+            assertThat(t, instanceOf(ReplyException.class));
+            testComplete();
         });
 
         await();

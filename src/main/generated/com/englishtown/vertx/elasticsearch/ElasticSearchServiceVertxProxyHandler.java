@@ -65,10 +65,10 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
   private final long timeoutSeconds;
 
   public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service) {
-    this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);  }
+    this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);
+  }
 
-  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service,
-    long timeoutInSecond) {
+  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service, long timeoutInSecond) {
     this(vertx, service, true, timeoutInSecond);
   }
 
@@ -114,51 +114,57 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
   }
 
   public void handle(Message<JsonObject> msg) {
-    JsonObject json = msg.body();
-    String action = msg.headers().get("action");
-    if (action == null) {
-      throw new IllegalStateException("action not specified");
-    }
-    accessed();
-    switch (action) {
+    try {
+      JsonObject json = msg.body();
+      String action = msg.headers().get("action");
+      if (action == null) {
+        throw new IllegalStateException("action not specified");
+      }
+      accessed();
+      switch (action) {
 
-      case "start": {
-        service.start();
-        break;
+        case "start": {
+          service.start();
+          break;
+        }
+        case "stop": {
+          service.stop();
+          break;
+        }
+        case "index": {
+          service.index((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (io.vertx.core.json.JsonObject)json.getValue("source"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.IndexOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "update": {
+          service.update((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.UpdateOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "get": {
+          service.get((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.GetOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "search": {
+          service.search(convertList(json.getJsonArray("indices").getList()), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "searchScroll": {
+          service.searchScroll((java.lang.String)json.getValue("scrollId"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchScrollOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "delete": {
+          service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.DeleteOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        default: {
+          throw new IllegalStateException("Invalid action: " + action);
+        }
       }
-      case "stop": {
-        service.stop();
-        break;
-      }
-      case "index": {
-        service.index((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (io.vertx.core.json.JsonObject)json.getValue("source"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.IndexOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      case "update": {
-        service.update((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.UpdateOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      case "get": {
-        service.get((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.GetOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      case "search": {
-        service.search(convertList(json.getJsonArray("indices").getList()), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      case "searchScroll": {
-        service.searchScroll((java.lang.String)json.getValue("scrollId"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchScrollOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      case "delete": {
-        service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.DeleteOptions(json.getJsonObject("options")), createHandler(msg));
-        break;
-      }
-      default: {
-        throw new IllegalStateException("Invalid action: " + action);
-      }
+    } catch (Throwable t) {
+      msg.fail(-1, t.getMessage());
+      throw t;
     }
   }
+
   private <T> Handler<AsyncResult<T>> createHandler(Message msg) {
     return res -> {
       if (res.failed()) {
@@ -168,6 +174,7 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       }
     };
   }
+
   private <T> Handler<AsyncResult<List<T>>> createListHandler(Message msg) {
     return res -> {
       if (res.failed()) {
@@ -177,6 +184,7 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       }
     };
   }
+
   private <T> Handler<AsyncResult<Set<T>>> createSetHandler(Message msg) {
     return res -> {
       if (res.failed()) {
@@ -186,6 +194,7 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       }
     };
   }
+
   private Handler<AsyncResult<List<Character>>> createListCharHandler(Message msg) {
     return res -> {
       if (res.failed()) {
@@ -199,6 +208,7 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       }
     };
   }
+
   private Handler<AsyncResult<Set<Character>>> createSetCharHandler(Message msg) {
     return res -> {
       if (res.failed()) {
@@ -212,12 +222,15 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       }
     };
   }
+
   private <T> Map<String, T> convertMap(Map map) {
     return (Map<String, T>)map;
   }
+
   private <T> List<T> convertList(List list) {
     return (List<T>)list;
   }
+
   private <T> Set<T> convertSet(List list) {
     return new HashSet<T>((List<T>)list);
   }
