@@ -137,4 +137,12 @@ public interface ElasticSearchService {
      */
     void delete(String index, String type, String id, DeleteOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
+    /**
+     * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
+     *
+     * @param index          the index name
+     * @param options        optional suggest options
+     * @param resultHandler  result handler callback
+     */
+    void suggest(String index, SuggestOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 }

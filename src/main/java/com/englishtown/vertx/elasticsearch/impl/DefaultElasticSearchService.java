@@ -1,6 +1,15 @@
 package com.englishtown.vertx.elasticsearch.impl;
 
-import com.englishtown.vertx.elasticsearch.*;
+import com.englishtown.vertx.elasticsearch.DeleteOptions;
+import com.englishtown.vertx.elasticsearch.ElasticSearchConfigurator;
+import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.GetOptions;
+import com.englishtown.vertx.elasticsearch.IndexOptions;
+import com.englishtown.vertx.elasticsearch.SearchOptions;
+import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
+import com.englishtown.vertx.elasticsearch.SuggestOptions;
+import com.englishtown.vertx.elasticsearch.TransportClientFactory;
+import com.englishtown.vertx.elasticsearch.UpdateOptions;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -15,6 +24,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequestBuilder;
+import org.elasticsearch.action.suggest.SuggestRequestBuilder;
+import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -24,6 +35,7 @@ import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.script.ScriptService;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -312,6 +324,41 @@ public class DefaultElasticSearchService implements ElasticSearchService {
                         .put(CONST_TYPE, deleteResponse.getType())
                         .put(CONST_ID, deleteResponse.getId())
                         .put(CONST_VERSION, deleteResponse.getVersion());
+                resultHandler.handle(Future.succeededFuture(json));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                resultHandler.handle(Future.failedFuture(t));
+            }
+        });
+
+    }
+
+    @Override
+    public void suggest(String index, SuggestOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
+
+        final SuggestRequestBuilder builder = client.prepareSuggest(index);
+
+        if (options != null) {
+            if (options.getName() != null) {
+                final CompletionSuggestionBuilder completionBuilder = new CompletionSuggestionBuilder(options.getName());
+                if (options.getText() != null) {
+                    completionBuilder.text(options.getText());
+                }
+                if (options.getField() != null) {
+                    completionBuilder.field(options.getField());
+                }
+
+                builder.addSuggestion(completionBuilder);
+            }
+        }
+
+        builder.execute(new ActionListener<SuggestResponse>() {
+
+            @Override
+            public void onResponse(SuggestResponse suggestResponse) {
+                JsonObject json = readResponse(suggestResponse.getSuggest());
                 resultHandler.handle(Future.succeededFuture(json));
             }
 

@@ -4,6 +4,7 @@ import com.englishtown.vertx.elasticsearch.ElasticSearchService;
 import com.englishtown.vertx.elasticsearch.IndexOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
 import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
+import com.englishtown.vertx.elasticsearch.SuggestOptions;
 import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -203,7 +204,30 @@ public class IntegrationTest extends VertxTestBase {
     }
 
     @Test
-    public void test6Delete() throws Exception {
+    public void test6Suggest() throws Exception {
+        SuggestOptions options = new SuggestOptions();
+        options.setText("v");
+        options.setField("message");
+        options.setName("test-suggest");
+
+        service.suggest(index, options, result -> {
+
+            assertTrue(result.succeeded());
+            JsonObject json = result.result();
+
+            assertNotNull(json.getJsonArray("test-suggest"));
+            assertNotNull(json.getJsonArray("test-suggest").getJsonObject(0));
+            assertEquals(Integer.valueOf(1),json.getJsonArray("test-suggest").getJsonObject(0).getInteger("length"));
+            assertEquals(source_message, json.getJsonArray("test-suggest").getJsonObject(0).getJsonArray("options").getJsonObject(0).getString("text"));
+
+            testComplete();
+        });
+
+        await();
+    }
+
+    @Test
+    public void test7Delete() throws Exception {
 
         service.delete(index, type, id, result -> {
 

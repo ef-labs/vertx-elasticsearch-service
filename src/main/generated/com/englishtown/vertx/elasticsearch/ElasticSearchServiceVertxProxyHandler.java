@@ -45,6 +45,7 @@ import com.englishtown.vertx.elasticsearch.ElasticSearchService;
 import com.englishtown.vertx.elasticsearch.UpdateOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
 import com.englishtown.vertx.elasticsearch.IndexOptions;
+import com.englishtown.vertx.elasticsearch.SuggestOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -153,6 +154,10 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
         }
         case "delete": {
           service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.DeleteOptions(json.getJsonObject("options")), createHandler(msg));
+          break;
+        }
+        case "suggest": {
+          service.suggest((java.lang.String)json.getValue("index"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SuggestOptions(json.getJsonObject("options")), createHandler(msg));
           break;
         }
         default: {
