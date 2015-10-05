@@ -1,10 +1,6 @@
 package com.englishtown.vertx.elasticsearch.integration;
 
-import com.englishtown.vertx.elasticsearch.ElasticSearchService;
-import com.englishtown.vertx.elasticsearch.IndexOptions;
-import com.englishtown.vertx.elasticsearch.SearchOptions;
-import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
-import com.englishtown.vertx.elasticsearch.SuggestOptions;
+import com.englishtown.vertx.elasticsearch.*;
 import com.englishtown.vertx.elasticsearch.impl.DefaultElasticSearchService;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -18,6 +14,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +28,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 public class IntegrationTest extends VertxTestBase {
 
     private ElasticSearchService service;
+    private ElasticSearchAdminService adminService;
     private String id = "integration-test-1";
     private String index = "test_index";
     private String type = "test_type";
@@ -42,6 +40,7 @@ public class IntegrationTest extends VertxTestBase {
         super.setUp();
 
         service = ElasticSearchService.createEventBusProxy(vertx, "et.elasticsearch");
+        adminService = ElasticSearchAdminService.createEventBusProxy(vertx, "et.elasticsearch.admin");
 
         CountDownLatch latch = new CountDownLatch(1);
         DeploymentOptions options = new DeploymentOptions().setConfig(readConfig());
@@ -205,29 +204,61 @@ public class IntegrationTest extends VertxTestBase {
 
     @Test
     public void test6Suggest() throws Exception {
-        SuggestOptions options = new SuggestOptions();
-        options.setText("v");
-        options.setField("message");
-        options.setName("test-suggest");
 
-        service.suggest(index, options, result -> {
+        JsonObject mapping = readJson("mapping.json");
 
-            assertTrue(result.succeeded());
-            JsonObject json = result.result();
+        adminService.putMapping(index, type, mapping, result1 -> {
 
-            assertNotNull(json.getJsonArray("test-suggest"));
-            assertNotNull(json.getJsonArray("test-suggest").getJsonObject(0));
-            assertEquals(Integer.valueOf(1),json.getJsonArray("test-suggest").getJsonObject(0).getInteger("length"));
-            assertEquals(source_message, json.getJsonArray("test-suggest").getJsonObject(0).getJsonArray("options").getJsonObject(0).getString("text"));
+            if (result1.failed()) {
+                result1.cause().printStackTrace();
+                fail();
+                return;
+            }
 
-            testComplete();
+            JsonObject source = new JsonObject()
+                    .put("user", source_user)
+                    .put("message", source_message)
+                    .put("message_suggest", source_message);
+
+
+            service.index(index, type, source, result2 -> {
+
+                if (result2.failed()) {
+                    result1.cause().printStackTrace();
+                    fail();
+                    return;
+                }
+
+                // Delay 1s to give time for indexing
+                vertx.setTimer(1000, id -> {
+                    SuggestOptions options = new SuggestOptions();
+                    options.setText("v");
+                    options.setField("message_suggest");
+                    options.setName("test-suggest");
+
+                    service.suggest(index, options, result3 -> {
+
+                        assertTrue(result3.succeeded());
+                        JsonObject json = result3.result();
+
+                        assertNotNull(json.getJsonArray("test-suggest"));
+                        assertNotNull(json.getJsonArray("test-suggest").getJsonObject(0));
+                        assertEquals(Integer.valueOf(1), json.getJsonArray("test-suggest").getJsonObject(0).getInteger("length"));
+                        assertEquals(source_message, json.getJsonArray("test-suggest").getJsonObject(0).getJsonArray("options").getJsonObject(0).getString("text"));
+
+                        testComplete();
+                    });
+                });
+
+            });
+
         });
 
         await();
     }
 
     @Test
-    public void test7Delete() throws Exception {
+    public void test99Delete() throws Exception {
 
         service.delete(index, type, id, result -> {
 
@@ -247,10 +278,14 @@ public class IntegrationTest extends VertxTestBase {
     }
 
     private JsonObject readConfig() {
+        return readJson("config.json");
+    }
+
+    private JsonObject readJson(String path) {
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        try (Scanner scanner = new Scanner(cl.getResourceAsStream("config.json")).useDelimiter("\\A")) {
+        try (Scanner scanner = new Scanner(cl.getResourceAsStream(path)).useDelimiter("\\A")) {
             String s = scanner.next();
             return new JsonObject(s);
         }

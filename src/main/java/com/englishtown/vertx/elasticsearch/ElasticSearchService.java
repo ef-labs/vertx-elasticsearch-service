@@ -9,7 +9,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.serviceproxy.ProxyHelper;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -140,9 +139,10 @@ public interface ElasticSearchService {
     /**
      * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
      *
-     * @param index          the index name
-     * @param options        optional suggest options
-     * @param resultHandler  result handler callback
+     * @param index         the index name
+     * @param options       optional suggest options
+     * @param resultHandler result handler callback
      */
     void suggest(String index, SuggestOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
+
 }

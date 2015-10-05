@@ -1,15 +1,7 @@
 package com.englishtown.vertx.elasticsearch.impl;
 
-import com.englishtown.vertx.elasticsearch.DeleteOptions;
-import com.englishtown.vertx.elasticsearch.ElasticSearchConfigurator;
-import com.englishtown.vertx.elasticsearch.ElasticSearchService;
-import com.englishtown.vertx.elasticsearch.GetOptions;
-import com.englishtown.vertx.elasticsearch.IndexOptions;
-import com.englishtown.vertx.elasticsearch.SearchOptions;
-import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
-import com.englishtown.vertx.elasticsearch.SuggestOptions;
-import com.englishtown.vertx.elasticsearch.TransportClientFactory;
-import com.englishtown.vertx.elasticsearch.UpdateOptions;
+import com.englishtown.vertx.elasticsearch.*;
+import com.englishtown.vertx.elasticsearch.internal.InternalElasticSearchService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -34,7 +26,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 
 import javax.inject.Inject;
@@ -45,7 +36,7 @@ import java.util.List;
 /**
  * Default implementation of {@link com.englishtown.vertx.elasticsearch.ElasticSearchService}
  */
-public class DefaultElasticSearchService implements ElasticSearchService {
+public class DefaultElasticSearchService implements InternalElasticSearchService {
 
     private final TransportClientFactory clientFactory;
     private final ElasticSearchConfigurator configurator;
@@ -368,6 +359,11 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             }
         });
 
+    }
+
+    @Override
+    public TransportClient getClient() {
+        return client;
     }
 
     protected JsonObject readResponse(ToXContent toXContent) {
