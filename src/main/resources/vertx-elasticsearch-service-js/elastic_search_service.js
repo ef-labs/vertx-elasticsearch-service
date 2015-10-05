@@ -26,6 +26,7 @@ var GetOptions = com.englishtown.vertx.elasticsearch.GetOptions;
 var SearchOptions = com.englishtown.vertx.elasticsearch.SearchOptions;
 var SearchScrollOptions = com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 var DeleteOptions = com.englishtown.vertx.elasticsearch.DeleteOptions;
+var SuggestOptions = com.englishtown.vertx.elasticsearch.SuggestOptions;
 
 /**
  ElasticSearch service
@@ -185,6 +186,27 @@ var ElasticSearchService = function(j_val) {
     var __args = arguments;
     if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
       j_elasticSearchService["delete(java.lang.String,java.lang.String,java.lang.String,com.englishtown.vertx.elasticsearch.DeleteOptions,io.vertx.core.Handler)"](index, type, id, options != null ? new DeleteOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
+      if (ar.succeeded()) {
+        resultHandler(utils.convReturnJson(ar.result()), null);
+      } else {
+        resultHandler(null, ar.cause());
+      }
+    });
+    } else utils.invalidArgs();
+  };
+
+  /**
+   https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
+
+   @public
+   @param index {string} the index name 
+   @param options {Object} optional suggest options 
+   @param resultHandler {function} result handler callback 
+   */
+  this.suggest = function(index, options, resultHandler) {
+    var __args = arguments;
+    if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'object' && typeof __args[2] === 'function') {
+      j_elasticSearchService["suggest(java.lang.String,com.englishtown.vertx.elasticsearch.SuggestOptions,io.vertx.core.Handler)"](index, options != null ? new SuggestOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
       } else {

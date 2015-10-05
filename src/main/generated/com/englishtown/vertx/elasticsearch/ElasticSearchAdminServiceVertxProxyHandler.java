@@ -16,7 +16,7 @@
 
 package com.englishtown.vertx.elasticsearch;
 
-import com.englishtown.vertx.elasticsearch.ElasticSearchService;
+import com.englishtown.vertx.elasticsearch.ElasticSearchAdminService;
 import io.vertx.core.Vertx;
 import io.vertx.core.Handler;
 import io.vertx.core.AsyncResult;
@@ -37,43 +37,37 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
-import com.englishtown.vertx.elasticsearch.DeleteOptions;
-import io.vertx.core.Vertx;
-import com.englishtown.vertx.elasticsearch.GetOptions;
+import com.englishtown.vertx.elasticsearch.ElasticSearchAdminService;
 import java.util.List;
-import com.englishtown.vertx.elasticsearch.ElasticSearchService;
-import com.englishtown.vertx.elasticsearch.UpdateOptions;
-import com.englishtown.vertx.elasticsearch.SearchOptions;
-import com.englishtown.vertx.elasticsearch.IndexOptions;
-import com.englishtown.vertx.elasticsearch.SuggestOptions;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import com.englishtown.vertx.elasticsearch.SearchScrollOptions;
+import com.englishtown.vertx.elasticsearch.MappingOptions;
 
 /*
   Generated Proxy code - DO NOT EDIT
   @author Roger the Robot
 */
-public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
+public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
 
   public static final long DEFAULT_CONNECTION_TIMEOUT = 5 * 60; // 5 minutes 
 
   private final Vertx vertx;
-  private final ElasticSearchService service;
+  private final ElasticSearchAdminService service;
   private final long timerID;
   private long lastAccessed;
   private final long timeoutSeconds;
 
-  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service) {
+  public ElasticSearchAdminServiceVertxProxyHandler(Vertx vertx, ElasticSearchAdminService service) {
     this(vertx, service, DEFAULT_CONNECTION_TIMEOUT);
   }
 
-  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service, long timeoutInSecond) {
+  public ElasticSearchAdminServiceVertxProxyHandler(Vertx vertx, ElasticSearchAdminService service, long timeoutInSecond) {
     this(vertx, service, true, timeoutInSecond);
   }
 
-  public ElasticSearchServiceVertxProxyHandler(Vertx vertx, ElasticSearchService service, boolean topLevel, long timeoutSeconds) {
+  public ElasticSearchAdminServiceVertxProxyHandler(Vertx vertx, ElasticSearchAdminService service, boolean topLevel, long timeoutSeconds) {
     this.vertx = vertx;
     this.service = service;
     this.timeoutSeconds = timeoutSeconds;
@@ -124,40 +118,8 @@ public class ElasticSearchServiceVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
 
-        case "start": {
-          service.start();
-          break;
-        }
-        case "stop": {
-          service.stop();
-          break;
-        }
-        case "index": {
-          service.index((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (io.vertx.core.json.JsonObject)json.getValue("source"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.IndexOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "update": {
-          service.update((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.UpdateOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "get": {
-          service.get((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.GetOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "search": {
-          service.search(convertList(json.getJsonArray("indices").getList()), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "searchScroll": {
-          service.searchScroll((java.lang.String)json.getValue("scrollId"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SearchScrollOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "delete": {
-          service.delete((java.lang.String)json.getValue("index"), (java.lang.String)json.getValue("type"), (java.lang.String)json.getValue("id"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.DeleteOptions(json.getJsonObject("options")), createHandler(msg));
-          break;
-        }
-        case "suggest": {
-          service.suggest((java.lang.String)json.getValue("index"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.SuggestOptions(json.getJsonObject("options")), createHandler(msg));
+        case "putMapping": {
+          service.putMapping(convertList(json.getJsonArray("indices").getList()), (java.lang.String)json.getValue("type"), (io.vertx.core.json.JsonObject)json.getValue("source"), json.getJsonObject("options") == null ? null : new com.englishtown.vertx.elasticsearch.MappingOptions(json.getJsonObject("options")), createHandler(msg));
           break;
         }
         default: {

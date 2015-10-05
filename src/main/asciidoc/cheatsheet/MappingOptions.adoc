@@ -1,0 +1,15 @@
+== MappingOptions
+
+++++
+ Options for admin put mapping operations
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+
+|[[ignoreConflicts]]`ignoreConflicts`
+|`Boolean`
+|-|===
