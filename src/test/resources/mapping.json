@@ -1,0 +1,23 @@
+{
+    "test_type": {
+        "properties": {
+            "message": {
+                "type": "string"
+            },
+            "message_suggest": {
+                "type": "completion"
+            },
+            "user": {
+                "type": "string"
+            },
+            "obj": {
+                "type": "object",
+                "properties": {
+                    "array": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

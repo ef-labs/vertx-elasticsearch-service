@@ -2,10 +2,13 @@ package com.englishtown.vertx.elasticsearch;
 
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for {@link SearchOptions}
@@ -43,7 +46,10 @@ public class SearchOptionsTest {
                 .setAggregations(new JsonObject().put("name", "name"))
                 .addSort("status", SortOrder.ASC)
                 .addSort("insert_date", SortOrder.ASC)
-                .setExtraSource(new JsonObject().put("extra", "1"));
+                .setExtraSource(new JsonObject().put("extra", "1"))
+                .setTemplateName("templateName")
+                .setTemplateType(ScriptService.ScriptType.INDEXED)
+                .setTemplateParams(new JsonObject().put("template_param", "sample_param"));
 
         json1 = options1.toJson();
 
@@ -57,6 +63,36 @@ public class SearchOptionsTest {
 
         assertEquals(json1.encode(), json2.encode());
 
+    }
+
+    @Test
+    public void testSetTemplateTypeFromJson() {
+
+        JsonObject json = new JsonObject();
+
+        try {
+            json.put("templateType", "not-a-real-enum");
+            new SearchOptions(json);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+            // Expected
+        }
+
+        json.put("templateType", "file");
+        SearchOptions options = new SearchOptions(json);
+        assertEquals(options.getTemplateType(), ScriptService.ScriptType.FILE);
+
+        json.put("templateType", "indexed");
+        options = new SearchOptions(json);
+        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INDEXED);
+
+        json.put("templateType", "inline");
+        options = new SearchOptions(json);
+        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INLINE);
+
+        json.remove("templateType");
+        options = new SearchOptions(json);
+        assertNull(options.getTemplateType());
     }
 
 }

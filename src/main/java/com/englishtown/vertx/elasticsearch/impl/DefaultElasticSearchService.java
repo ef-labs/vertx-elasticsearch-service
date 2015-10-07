@@ -1,6 +1,7 @@
 package com.englishtown.vertx.elasticsearch.impl;
 
 import com.englishtown.vertx.elasticsearch.*;
+import com.englishtown.vertx.elasticsearch.internal.InternalElasticSearchService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -15,6 +16,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequestBuilder;
+import org.elasticsearch.action.suggest.SuggestRequestBuilder;
+import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -23,6 +26,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -32,7 +36,7 @@ import java.util.List;
 /**
  * Default implementation of {@link com.englishtown.vertx.elasticsearch.ElasticSearchService}
  */
-public class DefaultElasticSearchService implements ElasticSearchService {
+public class DefaultElasticSearchService implements InternalElasticSearchService {
 
     private final TransportClientFactory clientFactory;
     private final ElasticSearchConfigurator configurator;
@@ -76,7 +80,7 @@ public class DefaultElasticSearchService implements ElasticSearchService {
     public void index(String index, String type, JsonObject source, IndexOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
 
         IndexRequestBuilder builder = client.prepareIndex(index, type)
-                .setSource(source.getMap());
+                .setSource(source.encode());
 
         if (options != null) {
             if (options.getId() != null) builder.setId(options.getId());
@@ -84,7 +88,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.getOpType() != null) builder.setOpType(options.getOpType());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
@@ -122,7 +125,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getRouting() != null) builder.setRouting(options.getRouting());
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
@@ -131,8 +133,8 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getScriptLang() != null) builder.setScriptLang(options.getScriptLang());
             if (options.getScriptParams() != null) builder.setScriptParams(options.getScriptParams().getMap());
             if (options.getRetryOnConflict() != null) builder.setRetryOnConflict(options.getRetryOnConflict());
-            if (options.getDoc() != null) builder.setDoc(options.getDoc().getMap());
-            if (options.getUpsert() != null) builder.setUpsert(options.getUpsert().getMap());
+            if (options.getDoc() != null) builder.setDoc(options.getDoc().encode());
+            if (options.getUpsert() != null) builder.setUpsert(options.getUpsert().encode());
             if (options.isDocAsUpsert() != null) builder.setDocAsUpsert(options.isDocAsUpsert());
             if (options.isDetectNoop() != null) builder.setDetectNoop(options.isDetectNoop());
             if (options.isScriptedUpsert() != null) builder.setScriptedUpsert(options.isScriptedUpsert());
@@ -246,7 +248,10 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (!options.getSorts().isEmpty()) {
                 options.getSorts().forEach(sort -> builder.addSort(sort.getField(), sort.getOrder()));
             }
-            if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().getMap());
+            if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().encode());
+            if (options.getTemplateName() != null) builder.setTemplateName(options.getTemplateName());
+            if (options.getTemplateType() != null) builder.setTemplateType(options.getTemplateType());
+            if (options.getTemplateParams() != null) builder.setTemplateParams(options.getTemplateParams().getMap());
         }
 
         builder.execute(new ActionListener<SearchResponse>() {
@@ -296,7 +301,6 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             if (options.getRouting() != null) builder.setRouting(options.getRouting());
             if (options.getParent() != null) builder.setParent(options.getParent());
             if (options.isRefresh() != null) builder.setRefresh(options.isRefresh());
-            if (options.getReplicationType() != null) builder.setReplicationType(options.getReplicationType());
             if (options.getConsistencyLevel() != null) builder.setConsistencyLevel(options.getConsistencyLevel());
             if (options.getVersion() != null) builder.setVersion(options.getVersion());
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
@@ -320,6 +324,46 @@ public class DefaultElasticSearchService implements ElasticSearchService {
             }
         });
 
+    }
+
+    @Override
+    public void suggest(String index, SuggestOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
+
+        final SuggestRequestBuilder builder = client.prepareSuggest(index);
+
+        if (options != null) {
+            if (options.getName() != null) {
+                final CompletionSuggestionBuilder completionBuilder = new CompletionSuggestionBuilder(options.getName());
+                if (options.getText() != null) {
+                    completionBuilder.text(options.getText());
+                }
+                if (options.getField() != null) {
+                    completionBuilder.field(options.getField());
+                }
+
+                builder.addSuggestion(completionBuilder);
+            }
+        }
+
+        builder.execute(new ActionListener<SuggestResponse>() {
+
+            @Override
+            public void onResponse(SuggestResponse suggestResponse) {
+                JsonObject json = readResponse(suggestResponse.getSuggest());
+                resultHandler.handle(Future.succeededFuture(json));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                resultHandler.handle(Future.failedFuture(t));
+            }
+        });
+
+    }
+
+    @Override
+    public TransportClient getClient() {
+        return client;
     }
 
     protected JsonObject readResponse(ToXContent toXContent) {

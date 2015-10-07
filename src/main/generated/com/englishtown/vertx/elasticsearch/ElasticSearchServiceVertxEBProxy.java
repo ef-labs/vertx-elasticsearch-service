@@ -37,6 +37,7 @@ import com.englishtown.vertx.elasticsearch.ElasticSearchService;
 import com.englishtown.vertx.elasticsearch.UpdateOptions;
 import com.englishtown.vertx.elasticsearch.SearchOptions;
 import com.englishtown.vertx.elasticsearch.IndexOptions;
+import com.englishtown.vertx.elasticsearch.SuggestOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -50,11 +51,17 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
 
   private Vertx _vertx;
   private String _address;
+  private DeliveryOptions _options;
   private boolean closed;
 
   public ElasticSearchServiceVertxEBProxy(Vertx vertx, String address) {
+    this(vertx, address, null);
+  }
+
+  public ElasticSearchServiceVertxEBProxy(Vertx vertx, String address, DeliveryOptions options) {
     this._vertx = vertx;
     this._address = address;
+    this._options = options;
   }
 
   public void start() {
@@ -73,7 +80,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("type", type);
     _json.put("source", source);
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "index");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
@@ -94,7 +101,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("type", type);
     _json.put("id", id);
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "update");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
@@ -115,7 +122,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("type", type);
     _json.put("id", id);
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "get");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
@@ -134,7 +141,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     JsonObject _json = new JsonObject();
     _json.put("indices", new JsonArray(indices));
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "search");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
@@ -153,7 +160,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     JsonObject _json = new JsonObject();
     _json.put("scrollId", scrollId);
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "searchScroll");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
@@ -174,8 +181,27 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     _json.put("type", type);
     _json.put("id", id);
     _json.put("options", options == null ? null : options.toJson());
-    DeliveryOptions _deliveryOptions = new DeliveryOptions();
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
     _deliveryOptions.addHeader("action", "delete");
+    _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
+      if (res.failed()) {
+        resultHandler.handle(Future.failedFuture(res.cause()));
+      } else {
+        resultHandler.handle(Future.succeededFuture(res.result().body()));
+      }
+    });
+  }
+
+  public void suggest(String index, SuggestOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
+    if (closed) {
+      resultHandler.handle(Future.failedFuture(new IllegalStateException("Proxy is closed")));
+      return;
+    }
+    JsonObject _json = new JsonObject();
+    _json.put("index", index);
+    _json.put("options", options == null ? null : options.toJson());
+    DeliveryOptions _deliveryOptions = (_options != null) ? new DeliveryOptions(_options) : new DeliveryOptions();
+    _deliveryOptions.addHeader("action", "suggest");
     _vertx.eventBus().<JsonObject>send(_address, _json, _deliveryOptions, res -> {
       if (res.failed()) {
         resultHandler.handle(Future.failedFuture(res.cause()));
@@ -190,7 +216,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     List<Character> list = new ArrayList<>();
     for (Object obj: arr) {
       Integer jobj = (Integer)obj;
-      list.add((char)jobj.intValue());
+      list.add((char)(int)jobj);
     }
     return list;
   }
@@ -199,7 +225,7 @@ public class ElasticSearchServiceVertxEBProxy implements ElasticSearchService {
     Set<Character> set = new HashSet<>();
     for (Object obj: arr) {
       Integer jobj = (Integer)obj;
-      set.add((char)jobj.intValue());
+      set.add((char)(int)jobj);
     }
     return set;
   }

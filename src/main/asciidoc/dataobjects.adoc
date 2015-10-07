@@ -1,0 +1,207 @@
+= Cheatsheets
+
+[[SortOption]]
+== SortOption
+
+++++
+ Sort option
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[field]]`field`|`String`|-
+|[[order]]`order`|`link:enums.html#SortOrder[SortOrder]`|-
+|===
+
+[[DeleteOptions]]
+== DeleteOptions
+
+++++
+ Delete operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
+|[[parent]]`parent`|`String`|-
+|[[refresh]]`refresh`|`Boolean`|-
+|[[routing]]`routing`|`String`|-
+|[[timeout]]`timeout`|`String`|-
+|[[version]]`version`|`Number (Long)`|-
+|[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|===
+
+[[UpdateOptions]]
+== UpdateOptions
+
+++++
+ Update operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
+|[[detectNoop]]`detectNoop`|`Boolean`|-
+|[[doc]]`doc`|`Json object`|-
+|[[docAsUpsert]]`docAsUpsert`|`Boolean`|-
+|[[fields]]`fields`|`Array of String`|-
+|[[parent]]`parent`|`String`|-
+|[[refresh]]`refresh`|`Boolean`|-
+|[[retryOnConflict]]`retryOnConflict`|`Number (Integer)`|-
+|[[routing]]`routing`|`String`|-
+|[[scriptLang]]`scriptLang`|`String`|-
+|[[scriptParams]]`scriptParams`|`Json object`|-
+|[[scriptedUpsert]]`scriptedUpsert`|`Boolean`|-
+|[[timeout]]`timeout`|`String`|-
+|[[upsert]]`upsert`|`Json object`|-
+|[[version]]`version`|`Number (Long)`|-
+|[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|===
+
+[[SearchOptions]]
+== SearchOptions
+
+++++
+ Search operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[aggregations]]`aggregations`|`Json object`|-
+|[[explain]]`explain`|`Boolean`|-
+|[[extraSource]]`extraSource`|`Json object`|-
+|[[fetchSource]]`fetchSource`|`Boolean`|-
+|[[fields]]`fields`|`Array of String`|-
+|[[from]]`from`|`Number (Integer)`|-
+|[[minScore]]`minScore`|`Number (Float)`|-
+|[[postFilter]]`postFilter`|`Json object`|-
+|[[preference]]`preference`|`String`|-
+|[[query]]`query`|`Json object`|-
+|[[routing]]`routing`|`String`|-
+|[[scroll]]`scroll`|`String`|-
+|[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
+|[[size]]`size`|`Number (Integer)`|-
+|[[templateName]]`templateName`|`String`|-
+|[[templateParams]]`templateParams`|`Json object`|-
+|[[templateType]]`templateType`|`link:enums.html#ScriptType[ScriptType]`|-
+|[[terminateAfter]]`terminateAfter`|`Number (Integer)`|-
+|[[timeout]]`timeout`|`String`|-
+|[[trackScores]]`trackScores`|`Boolean`|-
+|[[types]]`types`|`Array of String`|-
+|[[version]]`version`|`Boolean`|-
+|===
+
+[[IndexOptions]]
+== IndexOptions
+
+++++
+ Index operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
+|[[id]]`id`|`String`|-
+|[[opType]]`opType`|`link:enums.html#OpType[OpType]`|-
+|[[parent]]`parent`|`String`|-
+|[[refresh]]`refresh`|`Boolean`|-
+|[[routing]]`routing`|`String`|-
+|[[timeout]]`timeout`|`String`|-
+|[[timestamp]]`timestamp`|`String`|-
+|[[ttl]]`ttl`|`Number (Long)`|-
+|[[version]]`version`|`Number (Long)`|-
+|[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|===
+
+[[SuggestOptions]]
+== SuggestOptions
+
+++++
+ @author marcus
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[field]]`field`|`String`|-
+|[[name]]`name`|`String`|-
+|[[parent]]`parent`|`String`|-
+|[[refresh]]`refresh`|`Boolean`|-
+|[[routing]]`routing`|`String`|-
+|[[text]]`text`|`String`|-
+|[[version]]`version`|`Number (Long)`|-
+|[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|===
+
+[[MappingOptions]]
+== MappingOptions
+
+++++
+ Options for admin put mapping operations
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[ignoreConflicts]]`ignoreConflicts`|`Boolean`|-
+|===
+
+[[GetOptions]]
+== GetOptions
+
+++++
+ Get operation options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[fetchSource]]`fetchSource`|`Boolean`|-
+|[[fields]]`fields`|`Array of String`|-
+|[[ignoreErrorsOnGeneratedFields]]`ignoreErrorsOnGeneratedFields`|`Boolean`|-
+|[[parent]]`parent`|`String`|-
+|[[preference]]`preference`|`String`|-
+|[[realtime]]`realtime`|`Boolean`|-
+|[[refresh]]`refresh`|`Boolean`|-
+|[[routing]]`routing`|`String`|-
+|[[transformSource]]`transformSource`|`Boolean`|-
+|[[version]]`version`|`Number (Long)`|-
+|[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|===
+
+[[SearchScrollOptions]]
+== SearchScrollOptions
+
+++++
+ Search scroll options
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[scroll]]`scroll`|`String`|-
+|===
+
