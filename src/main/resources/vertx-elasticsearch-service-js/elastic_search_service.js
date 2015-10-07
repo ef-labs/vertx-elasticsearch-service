@@ -16,17 +16,18 @@
 
 /** @module vertx-elasticsearch-service-js/elastic_search_service */
 var utils = require('vertx-js/util/utils');
+var Vertx = require('vertx-js/vertx');
 
 var io = Packages.io;
 var JsonObject = io.vertx.core.json.JsonObject;
 var JElasticSearchService = com.englishtown.vertx.elasticsearch.ElasticSearchService;
-var IndexOptions = com.englishtown.vertx.elasticsearch.IndexOptions;
-var UpdateOptions = com.englishtown.vertx.elasticsearch.UpdateOptions;
-var GetOptions = com.englishtown.vertx.elasticsearch.GetOptions;
-var SearchOptions = com.englishtown.vertx.elasticsearch.SearchOptions;
-var SearchScrollOptions = com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 var DeleteOptions = com.englishtown.vertx.elasticsearch.DeleteOptions;
+var UpdateOptions = com.englishtown.vertx.elasticsearch.UpdateOptions;
+var SearchOptions = com.englishtown.vertx.elasticsearch.SearchOptions;
+var IndexOptions = com.englishtown.vertx.elasticsearch.IndexOptions;
 var SuggestOptions = com.englishtown.vertx.elasticsearch.SuggestOptions;
+var GetOptions = com.englishtown.vertx.elasticsearch.GetOptions;
+var SearchScrollOptions = com.englishtown.vertx.elasticsearch.SearchScrollOptions;
 
 /**
  ElasticSearch service
@@ -47,7 +48,7 @@ var ElasticSearchService = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       j_elasticSearchService["start()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -59,7 +60,7 @@ var ElasticSearchService = function(j_val) {
     var __args = arguments;
     if (__args.length === 0) {
       j_elasticSearchService["stop()"]();
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -82,7 +83,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -105,7 +106,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -128,7 +129,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -148,7 +149,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -169,7 +170,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -192,7 +193,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   /**
@@ -213,7 +214,7 @@ var ElasticSearchService = function(j_val) {
         resultHandler(null, ar.cause());
       }
     });
-    } else utils.invalidArgs();
+    } else throw new TypeError('function invoked with invalid arguments');
   };
 
   // A reference to the underlying Java delegate
@@ -233,7 +234,7 @@ ElasticSearchService.createEventBusProxy = function(vertx, address) {
   var __args = arguments;
   if (__args.length === 2 && typeof __args[0] === 'object' && __args[0]._jdel && typeof __args[1] === 'string') {
     return utils.convReturnVertxGen(JElasticSearchService["createEventBusProxy(io.vertx.core.Vertx,java.lang.String)"](vertx._jdel, address), ElasticSearchService);
-  } else utils.invalidArgs();
+  } else throw new TypeError('function invoked with invalid arguments');
 };
 
 // We export the Constructor function

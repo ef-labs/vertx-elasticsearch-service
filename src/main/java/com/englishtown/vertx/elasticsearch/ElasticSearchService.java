@@ -1,5 +1,6 @@
 package com.englishtown.vertx.elasticsearch;
 
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.ProxyIgnore;
 import io.vertx.codegen.annotations.VertxGen;
@@ -37,6 +38,8 @@ public interface ElasticSearchService {
      * @param source        the source to be indexed
      * @param resultHandler result handler callback
      */
+    @GenIgnore
+    @ProxyIgnore
     default void index(String index, String type, JsonObject source, Handler<AsyncResult<JsonObject>> resultHandler) {
         index(index, type, source, new IndexOptions(), resultHandler);
     }
@@ -71,6 +74,8 @@ public interface ElasticSearchService {
      * @param id            the source id to update
      * @param resultHandler result handler callback
      */
+    @GenIgnore
+    @ProxyIgnore
     default void get(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
         get(index, type, id, new GetOptions(), resultHandler);
     }
@@ -86,20 +91,28 @@ public interface ElasticSearchService {
      */
     void get(String index, String type, String id, GetOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
+    @GenIgnore
+    @ProxyIgnore
     default void search(String index, Handler<AsyncResult<JsonObject>> resultHandler) {
         search(index, new SearchOptions(), resultHandler);
     }
 
+    @GenIgnore
+    @ProxyIgnore
     default void search(String index, SearchOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
         search(Collections.singletonList(index), options, resultHandler);
     }
 
+    @GenIgnore
+    @ProxyIgnore
     default void search(List<String> indices, Handler<AsyncResult<JsonObject>> resultHandler) {
         search(indices, new SearchOptions(), resultHandler);
     }
 
     void search(List<String> indices, SearchOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
+    @GenIgnore
+    @ProxyIgnore
     default void searchScroll(String scrollId, Handler<AsyncResult<JsonObject>> resultHandler) {
         searchScroll(scrollId, new SearchScrollOptions(), resultHandler);
     }
@@ -121,6 +134,8 @@ public interface ElasticSearchService {
      * @param id            the source id to delete
      * @param resultHandler result handler callback
      */
+    @GenIgnore
+    @ProxyIgnore
     default void delete(String index, String type, String id, Handler<AsyncResult<JsonObject>> resultHandler) {
         delete(index, type, id, new DeleteOptions(), resultHandler);
     }
