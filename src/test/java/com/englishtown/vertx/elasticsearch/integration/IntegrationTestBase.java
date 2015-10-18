@@ -14,7 +14,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
  * {@link com.englishtown.vertx.elasticsearch.ElasticSearchServiceVerticle} integration test
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IntegrationTest extends VertxTestBase {
+public abstract class IntegrationTestBase extends VertxTestBase {
 
     private ElasticSearchService service;
     private ElasticSearchAdminService adminService;
@@ -35,6 +34,8 @@ public class IntegrationTest extends VertxTestBase {
     private String source_user = "englishtown";
     private String source_message = "vertx elastic search";
 
+    protected JsonObject config;
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -42,10 +43,18 @@ public class IntegrationTest extends VertxTestBase {
         service = ElasticSearchService.createEventBusProxy(vertx, "et.elasticsearch");
         adminService = ElasticSearchAdminService.createEventBusProxy(vertx, "et.elasticsearch.admin");
 
-        CountDownLatch latch = new CountDownLatch(1);
-        DeploymentOptions options = new DeploymentOptions().setConfig(readConfig());
+        config = readConfig();
+        deployVerticle();
+    }
 
-        vertx.deployVerticle("service:com.englishtown.vertx.vertx-elasticsearch-service", options, result -> {
+    protected abstract void deployVerticle() throws Exception;
+
+    protected void deployVerticle(String name) throws Exception {
+
+        CountDownLatch latch = new CountDownLatch(1);
+        DeploymentOptions options = new DeploymentOptions().setConfig(config);
+
+        vertx.deployVerticle(name, options, result -> {
             if (result.failed()) {
                 result.cause().printStackTrace();
                 fail();

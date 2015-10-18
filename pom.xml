@@ -13,7 +13,8 @@
 
     <properties>
         <es.version>1.7.2</es.version>
-        <hk2.version>2.1.0</hk2.version>
+        <vertx.hk2.version>2.1.0</vertx.hk2.version>
+        <vertx.guice.version>2.1.0</vertx.guice.version>
         <when.version>4.1.0</when.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
@@ -30,7 +31,14 @@
         <dependency>
             <groupId>com.englishtown.vertx</groupId>
             <artifactId>vertx-hk2</artifactId>
-            <version>${hk2.version}</version>
+            <version>${vertx.hk2.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.englishtown.vertx</groupId>
+            <artifactId>vertx-guice</artifactId>
+            <version>${vertx.guice.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>

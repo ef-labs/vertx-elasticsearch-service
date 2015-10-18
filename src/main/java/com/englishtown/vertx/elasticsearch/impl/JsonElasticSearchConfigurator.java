@@ -39,12 +39,7 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
 
     private static JsonObject getConfig(Vertx vertx) {
         JsonObject config = vertx.getOrCreateContext().config();
-
-        if (config.containsKey(CONFIG_NAME)) {
-            config = config.getJsonObject(CONFIG_NAME);
-        }
-
-        return config;
+        return config.getJsonObject(CONFIG_NAME, config);
     }
 
     protected void init(JsonObject config) {
