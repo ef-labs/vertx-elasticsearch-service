@@ -2,7 +2,15 @@
 
 Vert.x 3 elasticsearch service with event bus proxying.
 
-# TODO: Update the documents for vert.x 3 service proxying.
+
+### Version Matrix
+
+vert.x    | elasticsearch  | vertx-elasticsearch-service
+--------- | --------------   ---------------------------
+3.1.0     | 2.0.0          | 2.2.0-SNAPSHOT
+3.0.0     | 1.7.2          | 2.1.0
+2.1.x     | 1.3.2          | 1.3.0 (vertx-mod-elasticsearch)
+
 
 ## Configuration
 
@@ -13,7 +21,8 @@ The configuration options are as follows:
     "address": <address>,
     "transportAddresses": [ { "hostname": <hostname>, "port": <port> } ],
     "cluster_name": <cluster_name>,
-    "client_transport_sniff": <client_transport_sniff>
+    "client_transport_sniff": <client_transport_sniff>,
+    "requireUnits": false
 }
 ```
 
@@ -23,6 +32,7 @@ The configuration options are as follows:
     * `port` - the port of the node to connect to.  The default is `9300`.
 * `cluster_name` - the elastic search cluster name.  The default is `"elasticsearch"`.
 * `client_transport_sniff` - the client will sniff the rest of the cluster and add those into its list of machines to use.  The default is `true`.
+* `requireUnits` - boolean flag whether units are required.  The default is `false`.
 
 An example configuration would be:
 
@@ -38,11 +48,13 @@ An example configuration would be:
 NOTE: No configuration is needed if running elastic search locally with the default cluster name.
 
 
-#### Dependency Injection and the HK2VerticleFactory
+#### Dependency Injection
 
-The `ElasticSearchServiceVerticle` verticle requires a `TransportClientFactory` to be injected.  The default binding provided is for HK2, but you can create your own bindings for your container of choice.
+The `DefaultElasticSearchService` requires a `TransportClientFactory` and `ElasticSearchConfigurator` to be injected.
 
-See the [englishtown/vertx-hk2](https://github.com/englishtown/vertx-hk2) project for more details.
+Default bindings are provided for HK2 and Guice, but you can create your own bindings for your container of choice.
+
+See the [englishtown/vertx-hk2](https://github.com/englishtown/vertx-hk2) or [englishtown/vertx-guice](https://github.com/englishtown/vertx-guice) projects for further details.
 
 
 ## Action Commands
