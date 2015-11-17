@@ -1,10 +1,11 @@
 package com.englishtown.vertx.elasticsearch;
 
+import com.google.common.base.Strings;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.common.base.Strings;
+import org.elasticsearch.common.ParseFieldMatcher;
 import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -124,7 +125,7 @@ public class SearchOptions {
         templateParams = json.getJsonObject(JSON_FIELD_TEMPLATE_PARAMS);
 
         s = json.getString(JSON_FIELD_SEARCH_TYPE);
-        if (s != null) searchType = SearchType.fromString(s);
+        if (s != null) searchType = SearchType.fromString(s, ParseFieldMatcher.EMPTY);
 
         JsonArray sortOptionsJson = json.getJsonArray(JSON_FIELD_SORTS);
         if (sortOptionsJson != null) {

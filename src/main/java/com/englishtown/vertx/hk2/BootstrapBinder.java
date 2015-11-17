@@ -13,7 +13,7 @@ public class BootstrapBinder extends AbstractBinder {
      */
     @Override
     protected void configure() {
-        install(new ElasticSearchBinder());
+        install(new com.englishtown.vertx.elasticsearch.hk2.ElasticSearchBinder());
     }
 
 }

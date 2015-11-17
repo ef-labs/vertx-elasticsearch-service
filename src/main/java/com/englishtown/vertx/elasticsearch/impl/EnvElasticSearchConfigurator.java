@@ -5,6 +5,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import io.vertx.core.json.JsonObject;
 
 import javax.inject.Inject;
+import java.net.InetSocketAddress;
 
 /**
  * ElasticSearch configuration is read from JSON, but also tries to read environment variables.
@@ -50,7 +51,7 @@ public class EnvElasticSearchConfigurator extends JsonElasticSearchConfigurator 
                 String hostname = split[0];
                 int port = (split.length == 1 ? 9300 : Integer.getInteger(split[1]));
 
-                transportAddresses.add(new InetSocketTransportAddress(hostname, port));
+                transportAddresses.add(new InetSocketTransportAddress(new InetSocketAddress(hostname, port)));
             }
         }
 

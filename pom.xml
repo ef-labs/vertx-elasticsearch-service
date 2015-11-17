@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <es.version>1.7.2</es.version>
+        <es.version>2.0.0</es.version>
         <vertx.hk2.version>2.1.0</vertx.hk2.version>
         <vertx.guice.version>2.1.0</vertx.guice.version>
         <when.version>4.1.0</when.version>
