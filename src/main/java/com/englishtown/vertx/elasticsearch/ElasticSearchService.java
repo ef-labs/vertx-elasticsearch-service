@@ -31,7 +31,7 @@ public interface ElasticSearchService {
     void stop();
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/index_.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-index.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -45,7 +45,7 @@ public interface ElasticSearchService {
     }
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/index_.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-index.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -56,7 +56,7 @@ public interface ElasticSearchService {
     void index(String index, String type, JsonObject source, IndexOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/java-update-api.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-update.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -67,7 +67,7 @@ public interface ElasticSearchService {
     void update(String index, String type, String id, UpdateOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/get.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-get.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -81,7 +81,7 @@ public interface ElasticSearchService {
     }
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/get.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-get.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -118,7 +118,7 @@ public interface ElasticSearchService {
     }
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/reference/1.4/search-request-scroll.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-search-scrolling.html
      *
      * @param scrollId
      * @param options
@@ -127,7 +127,7 @@ public interface ElasticSearchService {
     void searchScroll(String scrollId, SearchScrollOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/delete.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-delete.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -141,7 +141,7 @@ public interface ElasticSearchService {
     }
 
     /**
-     * http://www.elastic.co/guide/en/elasticsearch/client/java-api/1.4/delete.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-delete.html
      *
      * @param index         the index name
      * @param type          the type name
@@ -152,7 +152,15 @@ public interface ElasticSearchService {
     void delete(String index, String type, String id, DeleteOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
 
     /**
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
+     * https://www.elastic.co/guide/en/elasticsearch/client/java-api/2.0/java-docs-bulk.html
+     *
+     * @param options
+     * @param resultHandler
+     */
+    void bulk(BulkOptions options, Handler<AsyncResult<JsonObject>> resultHandler);
+
+    /**
+     * https://www.elastic.co/guide/en/elasticsearch/reference/2.0/search-suggesters.html
      *
      * @param index         the index name
      * @param options       optional suggest options

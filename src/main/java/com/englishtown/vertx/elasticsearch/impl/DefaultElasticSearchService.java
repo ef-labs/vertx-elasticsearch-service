@@ -7,6 +7,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequestBuilder;
@@ -164,6 +166,25 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
                         .put(CONST_VERSION, updateResponse.getVersion())
                         .put(CONST_CREATED, updateResponse.isCreated());
                 resultHandler.handle(Future.succeededFuture(result));
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                resultHandler.handle(Future.failedFuture(e));
+            }
+        });
+
+    }
+
+    @Override
+    public void bulk(BulkOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {
+
+        BulkRequestBuilder builder = client.prepareBulk();
+
+        builder.execute(new ActionListener<BulkResponse>() {
+            @Override
+            public void onResponse(BulkResponse bulkItemResponses) {
+
             }
 
             @Override
