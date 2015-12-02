@@ -369,6 +369,7 @@ public class SearchOptions {
         if (templateName != null) json.put(JSON_FIELD_TEMPLATE_NAME, templateName);
         if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType.toString());
         if (templateParams != null) json.put(JSON_FIELD_TEMPLATE_PARAMS, templateParams);
+        if (extraSource != null) json.put(JSON_FIELD_EXTRA_SOURCE, extraSource);
 
         if (!sorts.isEmpty()) {
             JsonArray jsonSorts = new JsonArray();
