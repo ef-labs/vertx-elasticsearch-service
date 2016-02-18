@@ -58,8 +58,10 @@
 |[[refresh]]`refresh`|`Boolean`|-
 |[[retryOnConflict]]`retryOnConflict`|`Number (Integer)`|-
 |[[routing]]`routing`|`String`|-
+|[[script]]`script`|`String`|-
 |[[scriptLang]]`scriptLang`|`String`|-
 |[[scriptParams]]`scriptParams`|`Json object`|-
+|[[scriptType]]`scriptType`|`link:enums.html#ScriptType[ScriptType]`|-
 |[[scriptedUpsert]]`scriptedUpsert`|`Boolean`|-
 |[[timeout]]`timeout`|`String`|-
 |[[upsert]]`upsert`|`Json object`|-
@@ -93,6 +95,7 @@
 |[[scroll]]`scroll`|`String`|-
 |[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
 |[[size]]`size`|`Number (Integer)`|-
+|[[sorts]]`sorts`|`Array of link:dataobjects.html#SortOption[SortOption]`|-
 |[[templateName]]`templateName`|`String`|-
 |[[templateParams]]`templateParams`|`Json object`|-
 |[[templateType]]`templateType`|`link:enums.html#ScriptType[ScriptType]`|-
@@ -178,6 +181,8 @@
 |===
 ^|Name | Type ^| Description
 |[[fetchSource]]`fetchSource`|`Boolean`|-
+|[[fetchSourceExcludes]]`fetchSourceExcludes`|`Array of String`|-
+|[[fetchSourceIncludes]]`fetchSourceIncludes`|`Array of String`|-
 |[[fields]]`fields`|`Array of String`|-
 |[[ignoreErrorsOnGeneratedFields]]`ignoreErrorsOnGeneratedFields`|`Boolean`|-
 |[[parent]]`parent`|`String`|-

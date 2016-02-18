@@ -75,7 +75,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.index = function(index, type, source, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'object' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
+    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && (typeof __args[2] === 'object' && __args[2] != null) && (typeof __args[3] === 'object' && __args[3] != null) && typeof __args[4] === 'function') {
       j_elasticSearchService["index(java.lang.String,java.lang.String,io.vertx.core.json.JsonObject,com.englishtown.vertx.elasticsearch.IndexOptions,io.vertx.core.Handler)"](index, type, utils.convParamJsonObject(source), options != null ? new IndexOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -98,7 +98,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.update = function(index, type, id, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
+    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && (typeof __args[3] === 'object' && __args[3] != null) && typeof __args[4] === 'function') {
       j_elasticSearchService["update(java.lang.String,java.lang.String,java.lang.String,com.englishtown.vertx.elasticsearch.UpdateOptions,io.vertx.core.Handler)"](index, type, id, options != null ? new UpdateOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -121,7 +121,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.get = function(index, type, id, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
+    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && (typeof __args[3] === 'object' && __args[3] != null) && typeof __args[4] === 'function') {
       j_elasticSearchService["get(java.lang.String,java.lang.String,java.lang.String,com.englishtown.vertx.elasticsearch.GetOptions,io.vertx.core.Handler)"](index, type, id, options != null ? new GetOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -141,7 +141,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.search = function(indices, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'object' && typeof __args[2] === 'function') {
+    if (__args.length === 3 && typeof __args[0] === 'object' && __args[0] instanceof Array && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_elasticSearchService["search(java.util.List,com.englishtown.vertx.elasticsearch.SearchOptions,io.vertx.core.Handler)"](indices, options != null ? new SearchOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -162,7 +162,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.searchScroll = function(scrollId, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'object' && typeof __args[2] === 'function') {
+    if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_elasticSearchService["searchScroll(java.lang.String,com.englishtown.vertx.elasticsearch.SearchScrollOptions,io.vertx.core.Handler)"](scrollId, options != null ? new SearchScrollOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -185,7 +185,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.delete = function(index, type, id, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && typeof __args[3] === 'object' && typeof __args[4] === 'function') {
+    if (__args.length === 5 && typeof __args[0] === 'string' && typeof __args[1] === 'string' && typeof __args[2] === 'string' && (typeof __args[3] === 'object' && __args[3] != null) && typeof __args[4] === 'function') {
       j_elasticSearchService["delete(java.lang.String,java.lang.String,java.lang.String,com.englishtown.vertx.elasticsearch.DeleteOptions,io.vertx.core.Handler)"](index, type, id, options != null ? new DeleteOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
@@ -206,7 +206,7 @@ var ElasticSearchService = function(j_val) {
    */
   this.suggest = function(index, options, resultHandler) {
     var __args = arguments;
-    if (__args.length === 3 && typeof __args[0] === 'string' && typeof __args[1] === 'object' && typeof __args[2] === 'function') {
+    if (__args.length === 3 && typeof __args[0] === 'string' && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
       j_elasticSearchService["suggest(java.lang.String,com.englishtown.vertx.elasticsearch.SuggestOptions,io.vertx.core.Handler)"](index, options != null ? new SuggestOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
