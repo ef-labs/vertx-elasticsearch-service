@@ -74,7 +74,32 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>localhost</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <es.hostname>localhost</es.hostname>
+            </properties>
+        </profile>
+        <profile>
+            <id>dockerhost</id>
+            <properties>
+                <es.hostname>dockerhost</es.hostname>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
         <plugins>
             <!-- Configure the execution of the compiler to execute the codegen processor -->
             <plugin>

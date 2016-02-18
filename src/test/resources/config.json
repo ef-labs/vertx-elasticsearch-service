@@ -5,10 +5,7 @@
 
         "transportAddresses": [
             {
-                "hostname": "localhost"
-            },
-            {
-                "hostname": "dockerhost"
+                "hostname": "${es.hostname}"
             }
         ]
     }
