@@ -49,7 +49,7 @@ public class EnvElasticSearchConfigurator extends JsonElasticSearchConfigurator 
                 String[] split = address.split(":");
 
                 String hostname = split[0];
-                int port = (split.length == 1 ? 9300 : Integer.getInteger(split[1]));
+                int port = (split.length == 1 ? 9300 : Integer.parseInt(split[1]));
 
                 transportAddresses.add(new InetSocketTransportAddress(new InetSocketAddress(hostname, port)));
             }
