@@ -2,6 +2,7 @@
 
 Vert.x 3 elasticsearch service with event bus proxying.
 
+[![Build Status](https://travis-ci.org/ef-labs/vertx-elasticsearch-service.png)](https://travis-ci.org/ef-labs/vertx-elasticsearch-service)
 
 ### Version Matrix
 
