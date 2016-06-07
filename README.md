@@ -2,7 +2,8 @@
 
 Vert.x 3 elasticsearch service with event bus proxying.
 
-[![Build Status](https://travis-ci.org/ef-labs/vertx-elasticsearch-service.png)](https://travis-ci.org/ef-labs/vertx-elasticsearch-service)
+[![Build Status](http://img.shields.io/travis/ef-labs/vertx-elasticsearch-service.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/ef-labs/vertx-elasticsearch-service)
+[![Maven Central](https://img.shields.io/maven-central/v/com.englishtown.vertx/vertx-elasticsearch-service.svg?maxAge=2592000&style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.englishtown.vertx/vertx-elasticsearch-service/)
 
 ### Version Matrix
 
