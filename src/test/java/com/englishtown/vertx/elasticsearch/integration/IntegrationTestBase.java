@@ -8,8 +8,12 @@ import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.test.core.VertxTestBase;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.search.sort.SortOrder;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -35,6 +39,27 @@ public abstract class IntegrationTestBase extends VertxTestBase {
     private String source_message = "vertx elastic search";
 
     protected JsonObject config;
+
+    private static EmbeddedElasticsearchServer server;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        String embedded = System.getProperty("test.embedded");
+        if (Boolean.parseBoolean(embedded)) {
+            server = new EmbeddedElasticsearchServer();
+            ClusterHealthResponse response = server.waitForYellowStatus();
+            if (response.getStatus() == ClusterHealthStatus.RED) {
+                throw new IllegalStateException("Cluster status red!");
+            }
+        }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        if (server != null) {
+            server.close();
+        }
+    }
 
     @Override
     public void setUp() throws Exception {

@@ -5,7 +5,8 @@
 
         "transportAddresses": [
             {
-                "hostname": "${es.hostname}"
+                "hostname": "${test.es.hostname}",
+                "port": ${test.es.port}
             }
         ]
     }

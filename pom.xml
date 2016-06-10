@@ -14,6 +14,7 @@
     <properties>
         <vertx.version>3.2.1</vertx.version>
         <es.version>2.2.0</es.version>
+        <lucene.version>5.4.1</lucene.version>
         <vertx.hk2.version>2.1.0</vertx.hk2.version>
         <vertx.guice.version>2.1.0</vertx.guice.version>
         <when.version>4.1.0</when.version>
@@ -21,6 +22,10 @@
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
         <maven.jgitflow.plugin.version>1.0-m5.1</maven.jgitflow.plugin.version>
+
+        <!--Test properties-->
+        <test.es.hostname>localhost</test.es.hostname>
+        <test.es.port>9300</test.es.port>
     </properties>
 
     <dependencies>
@@ -60,6 +65,20 @@
             <optional>true</optional>
         </dependency>
 
+        <!--Test dependencies-->
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${es.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-test-framework</artifactId>
+            <version>${lucene.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.englishtown.vertx</groupId>
             <artifactId>vertx-when</artifactId>
@@ -76,18 +95,43 @@
 
     <profiles>
         <profile>
-            <id>localhost</id>
+            <id>embedded</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <es.hostname>localhost</es.hostname>
+                <test.es.port>19300</test.es.port>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <test.embedded>true</test.embedded>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <test.embedded>true</test.embedded>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>localhost</id>
         </profile>
         <profile>
             <id>dockerhost</id>
             <properties>
-                <es.hostname>dockerhost</es.hostname>
+                <test.es.hostname>dockerhost</test.es.hostname>
             </properties>
         </profile>
     </profiles>
