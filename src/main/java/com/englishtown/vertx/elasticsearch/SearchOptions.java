@@ -2,6 +2,7 @@ package com.englishtown.vertx.elasticsearch;
 
 import com.google.common.base.Strings;
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
@@ -230,6 +231,7 @@ public class SearchOptions {
         return sorts;
     }
 
+    @GenIgnore
     public SearchOptions addSort(String field, SortOrder order) {
         sorts.add(new SortOption().setField(field).setOrder(order));
         return this;

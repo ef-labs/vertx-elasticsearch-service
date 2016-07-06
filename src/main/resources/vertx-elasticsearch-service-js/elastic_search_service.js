@@ -142,7 +142,7 @@ var ElasticSearchService = function(j_val) {
   this.search = function(indices, options, resultHandler) {
     var __args = arguments;
     if (__args.length === 3 && typeof __args[0] === 'object' && __args[0] instanceof Array && (typeof __args[1] === 'object' && __args[1] != null) && typeof __args[2] === 'function') {
-      j_elasticSearchService["search(java.util.List,com.englishtown.vertx.elasticsearch.SearchOptions,io.vertx.core.Handler)"](indices, options != null ? new SearchOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
+      j_elasticSearchService["search(java.util.List,com.englishtown.vertx.elasticsearch.SearchOptions,io.vertx.core.Handler)"](utils.convParamListBasicOther(indices), options != null ? new SearchOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
       } else {

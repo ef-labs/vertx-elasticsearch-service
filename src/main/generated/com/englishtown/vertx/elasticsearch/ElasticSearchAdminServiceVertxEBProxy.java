@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.function.Function;
 import io.vertx.serviceproxy.ProxyHelper;
+import io.vertx.serviceproxy.ServiceException;
+import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import com.englishtown.vertx.elasticsearch.ElasticSearchAdminService;
 import java.util.List;
 import io.vertx.core.Vertx;
@@ -57,6 +59,10 @@ public class ElasticSearchAdminServiceVertxEBProxy implements ElasticSearchAdmin
     this._vertx = vertx;
     this._address = address;
     this._options = options;
+    try {
+      this._vertx.eventBus().registerDefaultCodec(ServiceException.class,
+          new ServiceExceptionMessageCodec());
+    } catch (IllegalStateException ex) {}
   }
 
   public void putMapping(List<String> indices, String type, JsonObject source, MappingOptions options, Handler<AsyncResult<JsonObject>> resultHandler) {

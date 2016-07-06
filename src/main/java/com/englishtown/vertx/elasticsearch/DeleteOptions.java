@@ -22,8 +22,4 @@ public class DeleteOptions extends AbstractWriteOptions<DeleteOptions> {
 
     }
 
-    @Override
-    public JsonObject toJson() {
-        return super.toJson();
-    }
 }

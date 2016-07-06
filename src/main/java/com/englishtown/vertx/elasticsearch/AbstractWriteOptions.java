@@ -51,6 +51,7 @@ public abstract class AbstractWriteOptions<T extends AbstractWriteOptions<T>> ex
         return returnThis();
     }
 
+    @Override
     public JsonObject toJson() {
         JsonObject json = super.toJson();
 

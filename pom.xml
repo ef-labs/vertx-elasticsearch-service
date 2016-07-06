@@ -8,20 +8,21 @@
     <parent>
         <groupId>com.englishtown.vertx</groupId>
         <artifactId>oss-parent-vertx</artifactId>
-        <version>2.1.0</version>
+        <version>2.2.0</version>
     </parent>
 
     <properties>
-        <vertx.version>3.2.1</vertx.version>
+        <vertx.version>3.3.0</vertx.version>
+        <!--TODO: wait for vert.x 3.3.1 with #85 bug fix https://github.com/vert-x3/vertx-codegen/issues/85 -->
+        <vertx.codegen.version>3.3.1-SNAPSHOT</vertx.codegen.version>
         <es.version>2.2.0</es.version>
         <lucene.version>5.4.1</lucene.version>
-        <vertx.hk2.version>2.1.0</vertx.hk2.version>
-        <vertx.guice.version>2.1.0</vertx.guice.version>
-        <when.version>4.1.0</when.version>
+        <vertx.hk2.version>2.4.0</vertx.hk2.version>
+        <vertx.guice.version>2.3.0</vertx.guice.version>
+        <when.version>4.1.1</when.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-        <maven.jgitflow.plugin.version>1.0-m5.1</maven.jgitflow.plugin.version>
 
         <!--Test properties-->
         <test.es.hostname>localhost</test.es.hostname>
@@ -55,7 +56,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-codegen</artifactId>
-            <version>${vertx.version}</version>
+            <version>${vertx.codegen.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>

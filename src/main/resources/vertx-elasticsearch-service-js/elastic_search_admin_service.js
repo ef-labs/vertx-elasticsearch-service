@@ -45,7 +45,7 @@ var ElasticSearchAdminService = function(j_val) {
   this.putMapping = function(indices, type, source, options, resultHandler) {
     var __args = arguments;
     if (__args.length === 5 && typeof __args[0] === 'object' && __args[0] instanceof Array && typeof __args[1] === 'string' && (typeof __args[2] === 'object' && __args[2] != null) && (typeof __args[3] === 'object' && __args[3] != null) && typeof __args[4] === 'function') {
-      j_elasticSearchAdminService["putMapping(java.util.List,java.lang.String,io.vertx.core.json.JsonObject,com.englishtown.vertx.elasticsearch.MappingOptions,io.vertx.core.Handler)"](indices, type, utils.convParamJsonObject(source), options != null ? new MappingOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
+      j_elasticSearchAdminService["putMapping(java.util.List,java.lang.String,io.vertx.core.json.JsonObject,com.englishtown.vertx.elasticsearch.MappingOptions,io.vertx.core.Handler)"](utils.convParamListBasicOther(indices), type, utils.convParamJsonObject(source), options != null ? new MappingOptions(new JsonObject(JSON.stringify(options))) : null, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
       } else {
