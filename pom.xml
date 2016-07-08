@@ -12,9 +12,7 @@
     </parent>
 
     <properties>
-        <vertx.version>3.3.0</vertx.version>
-        <!--TODO: wait for vert.x 3.3.1 with #85 bug fix https://github.com/vert-x3/vertx-codegen/issues/85 -->
-        <vertx.codegen.version>3.3.1-SNAPSHOT</vertx.codegen.version>
+        <vertx.version>3.3.1</vertx.version>
         <es.version>2.2.0</es.version>
         <lucene.version>5.4.1</lucene.version>
         <vertx.hk2.version>2.4.0</vertx.hk2.version>
@@ -28,6 +26,18 @@
         <test.es.hostname>localhost</test.es.hostname>
         <test.es.port>9300</test.es.port>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-dependencies</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -50,19 +60,16 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-service-proxy</artifactId>
-            <version>${vertx.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-codegen</artifactId>
-            <version>${vertx.codegen.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-lang-js</artifactId>
-            <version>${vertx.version}</version>
             <optional>true</optional>
         </dependency>
 
@@ -89,7 +96,6 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-service-factory</artifactId>
-            <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
