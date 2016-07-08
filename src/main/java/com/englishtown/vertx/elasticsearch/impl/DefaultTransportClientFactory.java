@@ -16,6 +16,6 @@ public class DefaultTransportClientFactory implements TransportClientFactory {
      */
     @Override
     public TransportClient create(Settings settings) {
-        return new TransportClient(settings);
+        return TransportClient.builder().settings(settings).build();
     }
 }

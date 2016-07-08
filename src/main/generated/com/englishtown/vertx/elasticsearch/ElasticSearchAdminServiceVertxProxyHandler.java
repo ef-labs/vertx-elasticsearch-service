@@ -37,6 +37,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import io.vertx.serviceproxy.ProxyHelper;
 import io.vertx.serviceproxy.ProxyHandler;
+import io.vertx.serviceproxy.ServiceException;
+import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import com.englishtown.vertx.elasticsearch.ElasticSearchAdminService;
 import java.util.List;
 import io.vertx.core.Vertx;
@@ -71,6 +73,10 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
     this.vertx = vertx;
     this.service = service;
     this.timeoutSeconds = timeoutSeconds;
+    try {
+      this.vertx.eventBus().registerDefaultCodec(ServiceException.class,
+          new ServiceExceptionMessageCodec());
+    } catch (IllegalStateException ex) {}
     if (timeoutSeconds != -1 && !topLevel) {
       long period = timeoutSeconds * 1000 / 2;
       if (period > 10000) {
@@ -127,7 +133,7 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
         }
       }
     } catch (Throwable t) {
-      msg.fail(-1, t.getMessage());
+      msg.reply(new ServiceException(500, t.getMessage()));
       throw t;
     }
   }
@@ -135,9 +141,17 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
   private <T> Handler<AsyncResult<T>> createHandler(Message msg) {
     return res -> {
       if (res.failed()) {
-        msg.fail(-1, res.cause().getMessage());
+        if (res.cause() instanceof ServiceException) {
+          msg.reply(res.cause());
+        } else {
+          msg.reply(new ServiceException(-1, res.cause().getMessage()));
+        }
       } else {
-        msg.reply(res.result());
+        if (res.result() != null  && res.result().getClass().isEnum()) {
+          msg.reply(((Enum) res.result()).name());
+        } else {
+          msg.reply(res.result());
+        }
       }
     };
   }
@@ -145,7 +159,11 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
   private <T> Handler<AsyncResult<List<T>>> createListHandler(Message msg) {
     return res -> {
       if (res.failed()) {
-        msg.fail(-1, res.cause().getMessage());
+        if (res.cause() instanceof ServiceException) {
+          msg.reply(res.cause());
+        } else {
+          msg.reply(new ServiceException(-1, res.cause().getMessage()));
+        }
       } else {
         msg.reply(new JsonArray(res.result()));
       }
@@ -155,7 +173,11 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
   private <T> Handler<AsyncResult<Set<T>>> createSetHandler(Message msg) {
     return res -> {
       if (res.failed()) {
-        msg.fail(-1, res.cause().getMessage());
+        if (res.cause() instanceof ServiceException) {
+          msg.reply(res.cause());
+        } else {
+          msg.reply(new ServiceException(-1, res.cause().getMessage()));
+        }
       } else {
         msg.reply(new JsonArray(new ArrayList<>(res.result())));
       }
@@ -165,7 +187,11 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
   private Handler<AsyncResult<List<Character>>> createListCharHandler(Message msg) {
     return res -> {
       if (res.failed()) {
-        msg.fail(-1, res.cause().getMessage());
+        if (res.cause() instanceof ServiceException) {
+          msg.reply(res.cause());
+        } else {
+          msg.reply(new ServiceException(-1, res.cause().getMessage()));
+        }
       } else {
         JsonArray arr = new JsonArray();
         for (Character chr: res.result()) {
@@ -179,7 +205,11 @@ public class ElasticSearchAdminServiceVertxProxyHandler extends ProxyHandler {
   private Handler<AsyncResult<Set<Character>>> createSetCharHandler(Message msg) {
     return res -> {
       if (res.failed()) {
-        msg.fail(-1, res.cause().getMessage());
+        if (res.cause() instanceof ServiceException) {
+          msg.reply(res.cause());
+        } else {
+          msg.reply(new ServiceException(-1, res.cause().getMessage()));
+        }
       } else {
         JsonArray arr = new JsonArray();
         for (Character chr: res.result()) {

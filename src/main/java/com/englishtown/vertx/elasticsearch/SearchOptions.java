@@ -1,10 +1,12 @@
 package com.englishtown.vertx.elasticsearch;
 
+import com.google.common.base.Strings;
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.common.base.Strings;
+import org.elasticsearch.common.ParseFieldMatcher;
 import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -124,7 +126,7 @@ public class SearchOptions {
         templateParams = json.getJsonObject(JSON_FIELD_TEMPLATE_PARAMS);
 
         s = json.getString(JSON_FIELD_SEARCH_TYPE);
-        if (s != null) searchType = SearchType.fromString(s);
+        if (s != null) searchType = SearchType.fromString(s, ParseFieldMatcher.EMPTY);
 
         JsonArray sortOptionsJson = json.getJsonArray(JSON_FIELD_SORTS);
         if (sortOptionsJson != null) {
@@ -229,6 +231,7 @@ public class SearchOptions {
         return sorts;
     }
 
+    @GenIgnore
     public SearchOptions addSort(String field, SortOrder order) {
         sorts.add(new SortOption().setField(field).setOrder(order));
         return this;
@@ -368,6 +371,7 @@ public class SearchOptions {
         if (templateName != null) json.put(JSON_FIELD_TEMPLATE_NAME, templateName);
         if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType.toString());
         if (templateParams != null) json.put(JSON_FIELD_TEMPLATE_PARAMS, templateParams);
+        if (extraSource != null) json.put(JSON_FIELD_EXTRA_SOURCE, extraSource);
 
         if (!sorts.isEmpty()) {
             JsonArray jsonSorts = new JsonArray();

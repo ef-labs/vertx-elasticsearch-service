@@ -21,17 +21,19 @@ import org.elasticsearch.action.suggest.SuggestResponse;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.Template;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Default implementation of {@link com.englishtown.vertx.elasticsearch.ElasticSearchService}
@@ -60,7 +62,9 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
     @Override
     public void start() {
 
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Settings.setSettingsRequireUnits(configurator.getSettingsRequireUnits());
+
+        Settings settings = Settings.builder()
                 .put("cluster.name", configurator.getClusterName())
                 .put("client.transport.sniff", configurator.getClientTransportSniff())
                 .build();
@@ -130,8 +134,6 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
             if (options.getVersionType() != null) builder.setVersionType(options.getVersionType());
             if (options.getTimeout() != null) builder.setTimeout(options.getTimeout());
 
-            if (options.getScriptLang() != null) builder.setScriptLang(options.getScriptLang());
-            if (options.getScriptParams() != null) builder.setScriptParams(options.getScriptParams().getMap());
             if (options.getRetryOnConflict() != null) builder.setRetryOnConflict(options.getRetryOnConflict());
             if (options.getDoc() != null) builder.setDoc(options.getDoc().encode());
             if (options.getUpsert() != null) builder.setUpsert(options.getUpsert().encode());
@@ -139,8 +141,13 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
             if (options.isDetectNoop() != null) builder.setDetectNoop(options.isDetectNoop());
             if (options.isScriptedUpsert() != null) builder.setScriptedUpsert(options.isScriptedUpsert());
 
-            if (options.getScript() != null && options.getScriptType() != null) {
-                builder.setScript(options.getScript(), options.getScriptType());
+            if (options.getScript() != null) {
+                if (options.getScriptType() != null) {
+                    Map<String, ? extends Object> params = (options.getScriptParams() == null ? null : options.getScriptParams().getMap());
+                    builder.setScript(new Script(options.getScript(), options.getScriptType(), options.getScriptLang(), params));
+                } else {
+                    builder.setScript(new Script(options.getScript()));
+                }
             }
             if (!options.getFields().isEmpty()) {
                 builder.setFields(options.getFields().toArray(new String[options.getFields().size()]));
@@ -249,9 +256,14 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
                 options.getSorts().forEach(sort -> builder.addSort(sort.getField(), sort.getOrder()));
             }
             if (options.getExtraSource() != null) builder.setExtraSource(options.getExtraSource().encode());
-            if (options.getTemplateName() != null) builder.setTemplateName(options.getTemplateName());
-            if (options.getTemplateType() != null) builder.setTemplateType(options.getTemplateType());
-            if (options.getTemplateParams() != null) builder.setTemplateParams(options.getTemplateParams().getMap());
+            if (options.getTemplateName() != null) {
+                if (options.getTemplateType() != null) {
+                    Map<String, Object> params = (options.getTemplateParams() == null ? null : options.getTemplateParams().getMap());
+                    builder.setTemplate(new Template(options.getTemplateName(), options.getTemplateType(), null, null, params));
+                } else {
+                    builder.setTemplate(new Template(options.getTemplateName()));
+                }
+            }
         }
 
         builder.execute(new ActionListener<SearchResponse>() {

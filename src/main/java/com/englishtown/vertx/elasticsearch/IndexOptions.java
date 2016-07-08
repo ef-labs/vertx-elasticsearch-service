@@ -80,6 +80,7 @@ public class IndexOptions extends AbstractWriteOptions<IndexOptions> {
         return this;
     }
 
+    @Override
     public JsonObject toJson() {
         JsonObject json = super.toJson();
 

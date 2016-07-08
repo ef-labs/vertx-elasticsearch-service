@@ -8,13 +8,16 @@ import io.vertx.core.eventbus.ReplyException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.test.core.VertxTestBase;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.search.sort.SortOrder;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +28,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
  * {@link com.englishtown.vertx.elasticsearch.ElasticSearchServiceVerticle} integration test
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IntegrationTest extends VertxTestBase {
+public abstract class IntegrationTestBase extends VertxTestBase {
 
     private ElasticSearchService service;
     private ElasticSearchAdminService adminService;
@@ -35,6 +38,29 @@ public class IntegrationTest extends VertxTestBase {
     private String source_user = "englishtown";
     private String source_message = "vertx elastic search";
 
+    protected JsonObject config;
+
+    private static EmbeddedElasticsearchServer server;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        String embedded = System.getProperty("test.embedded");
+        if (Boolean.parseBoolean(embedded)) {
+            server = new EmbeddedElasticsearchServer();
+            ClusterHealthResponse response = server.waitForYellowStatus();
+            if (response.getStatus() == ClusterHealthStatus.RED) {
+                throw new IllegalStateException("Cluster status red!");
+            }
+        }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        if (server != null) {
+            server.close();
+        }
+    }
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -42,10 +68,18 @@ public class IntegrationTest extends VertxTestBase {
         service = ElasticSearchService.createEventBusProxy(vertx, "et.elasticsearch");
         adminService = ElasticSearchAdminService.createEventBusProxy(vertx, "et.elasticsearch.admin");
 
-        CountDownLatch latch = new CountDownLatch(1);
-        DeploymentOptions options = new DeploymentOptions().setConfig(readConfig());
+        config = readConfig();
+        deployVerticle();
+    }
 
-        vertx.deployVerticle("service:com.englishtown.vertx.vertx-elasticsearch-service", options, result -> {
+    protected abstract void deployVerticle() throws Exception;
+
+    protected void deployVerticle(String name) throws Exception {
+
+        CountDownLatch latch = new CountDownLatch(1);
+        DeploymentOptions options = new DeploymentOptions().setConfig(config);
+
+        vertx.deployVerticle(name, options, result -> {
             if (result.failed()) {
                 result.cause().printStackTrace();
                 fail();
