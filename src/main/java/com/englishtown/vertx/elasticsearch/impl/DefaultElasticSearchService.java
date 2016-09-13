@@ -6,6 +6,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -114,7 +115,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
 
@@ -168,7 +169,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable e) {
-                resultHandler.handle(Future.failedFuture(e));
+                handleFailure(resultHandler, e);
             }
         });
 
@@ -218,7 +219,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
 
@@ -275,7 +276,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
     }
@@ -298,7 +299,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
 
@@ -332,7 +333,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
 
@@ -367,7 +368,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             @Override
             public void onFailure(Throwable t) {
-                resultHandler.handle(Future.failedFuture(t));
+                handleFailure(resultHandler, t);
             }
         });
 
@@ -379,7 +380,6 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
     }
 
     protected JsonObject readResponse(ToXContent toXContent) {
-
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             builder.startObject();
@@ -391,7 +391,15 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private static void handleFailure(final Handler<AsyncResult<JsonObject>> resultHandler, final Throwable t) {
+        if (t instanceof ElasticsearchException) {
+            final ElasticsearchException esException = (ElasticsearchException) t;
+            resultHandler.handle(Future.failedFuture(esException.getDetailedMessage()));
+        } else {
+            resultHandler.handle(Future.failedFuture(t));
+        }
     }
 
 }
