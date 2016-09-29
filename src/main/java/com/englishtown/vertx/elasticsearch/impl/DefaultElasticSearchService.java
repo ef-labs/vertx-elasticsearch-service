@@ -353,6 +353,9 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
                 if (options.getField() != null) {
                     completionBuilder.field(options.getField());
                 }
+                if (options.getSize() != null) {
+                    completionBuilder.size(options.getSize());
+                }
 
                 builder.addSuggestion(completionBuilder);
             }

@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 
 /**
  * @author marcus
+ * @author ralf
  * @since 1.0.0
  */
 @DataObject
@@ -13,10 +14,12 @@ public class SuggestOptions extends AbstractOptions<SuggestOptions> {
     public static final String FIELD_SUGGESTION_NAME = "suggestionName";
     public static final String FIELD_SUGGESTION_TEXT = "suggestionText";
     public static final String FIELD_SUGGESTION_FIELD = "suggestionField";
+    public static final String FIELD_SUGGESTION_SIZE = "suggestionSize";
 
     private String name;
     private String text;
     private String field;
+    private Integer size;
 
     public SuggestOptions() {
     }
@@ -27,6 +30,7 @@ public class SuggestOptions extends AbstractOptions<SuggestOptions> {
         name = other.getName();
         text = other.getText();
         field = other.getField();
+        size = other.getSize();
     }
 
     public SuggestOptions(JsonObject json) {
@@ -35,6 +39,7 @@ public class SuggestOptions extends AbstractOptions<SuggestOptions> {
         name = json.getString(FIELD_SUGGESTION_NAME);
         text = json.getString(FIELD_SUGGESTION_TEXT);
         field = json.getString(FIELD_SUGGESTION_FIELD);
+        size = json.getInteger(FIELD_SUGGESTION_SIZE);
     }
 
     public String getName() {
@@ -64,6 +69,15 @@ public class SuggestOptions extends AbstractOptions<SuggestOptions> {
         return this;
     }
 
+    public Integer getSize() {
+        return size;
+    }
+
+    public SuggestOptions setSize(final Integer size) {
+        this.size = size;
+        return this;
+    }
+
     @Override
     public JsonObject toJson() {
         final JsonObject json = super.toJson();
@@ -71,6 +85,7 @@ public class SuggestOptions extends AbstractOptions<SuggestOptions> {
         if (getName() != null) json.put(FIELD_SUGGESTION_NAME,getName());
         if (getText() != null) json.put(FIELD_SUGGESTION_TEXT,getText());
         if (getField() != null) json.put(FIELD_SUGGESTION_FIELD,getField());
+        if (getSize() != null) json.put(FIELD_SUGGESTION_SIZE,getSize());
 
         return json;
     }

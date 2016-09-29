@@ -13,11 +13,11 @@ public class SuggestOptionsTest {
 
     @Test
     public void testSuggestOptions() throws Exception {
-        SuggestOptions options = new SuggestOptions().setField("field").setName("name").setText("text");
+        final SuggestOptions options = new SuggestOptions().setField("field").setName("name").setText("text").setSize(10);
 
-        JsonObject json = options.toJson();
+        final JsonObject json = options.toJson();
 
-        assertEquals(3, json.fieldNames().size());
+        assertEquals(4, json.fieldNames().size());
 
         final SuggestOptions other = new SuggestOptions(options);
         final SuggestOptions otherFromJson = new SuggestOptions(json);
